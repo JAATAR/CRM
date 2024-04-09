@@ -3,7 +3,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
 
         // we create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
