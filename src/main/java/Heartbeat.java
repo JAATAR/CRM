@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 public class Heartbeat {
 
     private String service;
-    private String timestamp;
+    private long timestamp;
     private String error;
     private int status;
 
@@ -36,7 +36,7 @@ public class Heartbeat {
         this.timestamp = getCurrentTimestamp();
 
         if (isSalesforceAvailable()){
-            this.error = "No error";
+            this.error = "none";
             this.status = 1;
         }else {
             this.error = "Error";
@@ -56,11 +56,11 @@ public class Heartbeat {
     }
 
     @XmlElement
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -154,11 +154,8 @@ public class Heartbeat {
     }
 
     //create a timestamp
-    private String getCurrentTimestamp(){
-
-        //crate a dateformat to format the date the way we want
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(new Date()); //return the date formatted with the format created above
+    private long getCurrentTimestamp(){
+        return System.currentTimeMillis() / 1000; // Convert milliseconds to seconds
     }
 
 }
