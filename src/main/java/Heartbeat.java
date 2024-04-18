@@ -28,18 +28,18 @@ public class Heartbeat {
     private String error;
     private int status;
 
-    private String exhangeName = "controlroom_exchange";
+    private String queuName = "heartbeat_queu";
     private String host = "10.2.160.9";
 
     public Heartbeat() throws Exception {
-        this.service = "CRM";
+        this.service = "crm";
         this.timestamp = getCurrentTimestamp();
 
         if (isSalesforceAvailable()){
             this.error = "none";
             this.status = 1;
         }else {
-            this.error = "Error";
+            this.error = "error";
             this.status = 0;
         }
 
@@ -106,7 +106,7 @@ public class Heartbeat {
             //create a connection with the server and a channel where we communicate through
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
-            channel.exchangeDeclare(exhangeName,"direct");//we declare an exchange on the channel(if the exchange already exists this line will be ignored)
+            channel.queueDeclare(queuName,false,false,false,null);//we declare a queu on the channel(if the queu already exists this line will be ignored)
 
             // create an xml document
             String xml = createXML();
@@ -120,7 +120,7 @@ public class Heartbeat {
             byte [] xmlBytes = byteArrayOutputStream.toByteArray();
 
             //xml sent to the exchange
-            channel.basicPublish(exhangeName,"",null,xmlBytes);
+            channel.basicPublish("",queuName,null,xmlBytes);
             System.out.println("heartbeat has been sent succesfully");
 
         }catch(IOException | TimeoutException e){
