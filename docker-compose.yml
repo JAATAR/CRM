@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  crm-java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crm-app
+    restart: always
