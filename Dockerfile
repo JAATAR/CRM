@@ -6,7 +6,7 @@ COPY . .
 
 RUN mvn package
 
-FROM adoptopenjdk/openjdk21:latest
+FROM openjdk:21-jdk
 
 WORKDIR /app
 
