@@ -28,7 +28,7 @@ public class Heartbeat {
     private String error;
     private int status;
 
-    private String queuName = "heartbeat_queu";
+    private String queuName = "heartbeat_queue";
     private String host = "10.2.160.9";
 
     public Heartbeat() throws Exception {
