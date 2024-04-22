@@ -7,10 +7,16 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -98,6 +104,8 @@ public class Heartbeat {
     }
     public void sendHeartbeat() throws Exception {
 
+        String xsd = "src/main/resources/heartbeat.xsd";
+
         //create a connectionfactory and set the host on which rabbitmq runs
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(host);
@@ -110,6 +118,13 @@ public class Heartbeat {
 
             // create an xml document
             String xml = createXML();
+
+            //validate the xml against the xsd
+            if (!validateXML(xml,xsd)){
+
+                System.out.println("XML validation failed. Heartbeat not sent");
+                return; // if validation fails the method stops and heartbeat is not sent
+            }
 
             //convert it to byte array to send to the exchange
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -156,6 +171,24 @@ public class Heartbeat {
     //create a timestamp
     private long getCurrentTimestamp(){
         return System.currentTimeMillis() / 1000; // Convert milliseconds to seconds
+    }
+
+    //validate xml
+
+    public static boolean validateXML(String xml, String xsdPath) {
+
+        try {
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); //instance of schemafactory for xml validation
+            Schema schema = factory.newSchema(new File(xsdPath)); //instance of schema by parsing the xsd file
+
+            Validator validator =schema.newValidator();
+            validator.validate(new StreamSource(new StringReader(xml))); //validating the xml against the xsd using streamsource object created from stringreader containing the xml
+        }catch (IOException | SAXException e){
+            System.out.println("Exception" + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
 }
