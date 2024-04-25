@@ -4,9 +4,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -25,14 +23,14 @@ import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
 //annotation are part of jaxb
-@XmlRootElement
+@XmlRootElement(name = "heartbeat")
 @XmlType(propOrder = {"service", "timestamp", "error", "status"})
 public class Heartbeat {
 
     private String service;
     private long timestamp;
     private String error;
-    private int status;
+    private String status;
 
     private String queuName = "heartbeat_queue";
     private String host = "10.2.160.9";
@@ -43,16 +41,16 @@ public class Heartbeat {
 
         if (isSalesforceAvailable()){
             this.error = "none";
-            this.status = 1;
+            this.status = "up";
         }else {
             this.error = "error";
-            this.status = 0;
+            this.status = "down";
         }
 
     }
 
 
-    @XmlElement
+    @XmlAttribute
     public String getService() {
         return service;
     }
@@ -80,11 +78,11 @@ public class Heartbeat {
     }
 
     @XmlElement
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -93,6 +91,7 @@ public class Heartbeat {
         JAXBContext context = JAXBContext.newInstance(Heartbeat.class); //create a jaxb context for the heartbeat class to use the jaxb api
         Marshaller marshaller = context.createMarshaller();//marshaller converts an object to xml
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);// format the xml for better readability
+        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new CustomNamespacePrefixMapper());
 
         //we collect the output to a stringwriter so we can turn the marshaller xml into a string
         StringWriter stringWriter = new StringWriter();
@@ -125,6 +124,8 @@ public class Heartbeat {
                 System.out.println("XML validation failed. Heartbeat not sent");
                 return; // if validation fails the method stops and heartbeat is not sent
             }
+
+            System.out.println("XML validation succesful");
 
             //convert it to byte array to send to the exchange
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

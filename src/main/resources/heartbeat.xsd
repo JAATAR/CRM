@@ -1,41 +1,18 @@
-<xs:schema
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        version="0.1"
-        targetNamespace="http://ehb.local"
-        xmlns:r="http://ehb.local"
-        elementFormDefault="qualified">
-
-    <xs:complexType name="service">
-        <xs:attribute name="name" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:token">
-                    <xs:enumeration value="advertenties"/>
-                    <xs:enumeration value="crm"/>
-                    <xs:enumeration value="facturatie"/>
-                    <xs:enumeration value="frontend"/>
-                    <xs:enumeration value="kassa"/>
-                    <xs:enumeration value="mailing"/>
-                    <xs:enumeration value="monitoring"/>
-                    <xs:enumeration value="planning"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-    </xs:complexType>
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
 
 
-    <xs:complexType name="heartbeat">
-        <xs:all>
-            <xs:element name="service" type="r:service"/>
-            <xs:element name="timestamp" type="xs:dateTime"/>
-            <xs:element name="status" type="xs:positiveInteger"/>
-            <xs:element name="error" type="xs:token"/>
-            <xs:element name="extra" minOccurs="0">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element type="xs:positiveInteger" name="user-count" />
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
-        </xs:all>
-    </xs:complexType>
+    <xs:element name="heartbeat">
+        <xs:complexType>
+
+            <xs:sequence>
+                <xs:element name="timestamp" type="xs:integer"/>
+                <xs:element name="error" type="xs:string"/>
+                <xs:element name="status" type="xs:string"/>
+            </xs:sequence>
+
+            <xs:attribute name="service" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
