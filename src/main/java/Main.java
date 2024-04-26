@@ -1,9 +1,10 @@
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
         // we create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
@@ -18,6 +19,10 @@ public class Main {
                 e.printStackTrace();
             }
         }, 0, 5, TimeUnit.SECONDS);
+
+
+        Consumer consumer = new Consumer();
+        consumer.startConsuming();
 
     }
 }
