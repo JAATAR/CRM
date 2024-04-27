@@ -1,6 +1,10 @@
+import com.force.api.ApiConfig;
+import com.force.api.ForceApi;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Consumer {
 
@@ -51,6 +55,22 @@ public class Consumer {
 
         // start consuming messages from the queue
         channel.basicConsume(queueName, true, consumer);
+    }
+    public void saveToSalesforce(){
+        ApiConfig config = new ApiConfig().setClientId("3MVG9PwZx9R6_UrfopP9UuSYm9.9btZdAiMG6rKyTdaV8nUXzfEiZJ9oT9XyY4lKvsxSv0W9L28QibW7MWtmD")
+                .setClientSecret("8F01848AA8E6016D0D1EEA3DC0BA2C0B270C0EF3106DFFAEE09CC384F058B10C")
+                .setUsername("ehbevent")
+                .setPassword("Event5431");
+        ForceApi api = new ForceApi(config);
+        // Create a Java object representing your dataCustomObject
+        customObject = new CustomObject("Test Object", "This is a test object created from Java.");
+        // Convert the Java object to a Map for Salesforce API
+        Map<String, Object> objectMap = new HashMap<>();
+         objectMap.put("Name__c", customObject.getName());
+        objectMap.put("Description__c", customObject.getDescription());
+        // Save the object to Salesforce
+         api.createSObject("Custom_Object__c", objectMap);
+         }
     }
 }
 

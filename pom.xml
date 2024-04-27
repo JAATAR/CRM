@@ -62,6 +62,12 @@
             <version>2.2.4-1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.frejo</groupId>
+            <artifactId>force-rest-api</artifactId>
+            <version>0.0.45</version>
+        </dependency>
+
 
     </dependencies>
 
