@@ -18,29 +18,19 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <configuration>
-                            <transformers>
-                                <transformer>
-                                    <id>com.google.code.maven-shade-plugin:shade</id>
-                                    <artifactSet>
-                                        <includes>
-                                            <include>!META-INF/*.SF</include>
-                                        </includes>
-                                    </artifactSet>
-                                </transformer>
-                            </transformers>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
                             <mainClass>Main</mainClass>
-                        </configuration>
-                    </execution>
-                </executions>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 
 
