@@ -14,6 +14,7 @@ public class Main {
             try {
                 Heartbeat heartbeat = new Heartbeat();
                 heartbeat.sendHeartbeat();
+                heartbeat.createXML();
             } catch (Exception e) {
                 e.printStackTrace();
             }

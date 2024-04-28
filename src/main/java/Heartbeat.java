@@ -88,8 +88,10 @@ public class Heartbeat {
 
     public String createXML() throws JAXBException{
 
+        System.out.println("calling createXML");
         JAXBContext context = JAXBContext.newInstance(Heartbeat.class); //create a jaxb context for the heartbeat class to use the jaxb api
         Marshaller marshaller = context.createMarshaller();//marshaller converts an object to xml
+        System.out.println("xml is creating");
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);// format the xml for better readability
         //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new CustomNamespacePrefixMapper());
 
@@ -102,12 +104,13 @@ public class Heartbeat {
         return xmlString;
     }
     public void sendHeartbeat() throws Exception {
-
+        System.out.println("calling send heartbeat");
         String xsd = "src/main/resources/heartbeat.xsd";
 
         //create a connectionfactory and set the host on which rabbitmq runs
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(host);
+        System.out.println("connection made");
 
         try{
             //create a connection with the server and a channel where we communicate through
