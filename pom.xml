@@ -21,24 +21,27 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
                 <executions>
-                <execution>
-                    <phase>package</phase>
-                    <configuration>
-                        <transformers>
-                            <transformer>
-                                <id>com.google.code.maven-shade-plugin:shade</id>
-                                <artifactSet>
-                                    <includes>
-                                        <include>!META-INF/*.SF</include>  </includes>
-                                </artifactSet>
-                            </transformer>
-                        </transformers>
-                    </configuration>
-                </execution>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <transformers>
+                                <transformer>
+                                    <id>com.google.code.maven-shade-plugin:shade</id>
+                                    <artifactSet>
+                                        <includes>
+                                            <include>!META-INF/*.SF</include>
+                                        </includes>
+                                    </artifactSet>
+                                </transformer>
+                            </transformers>
+                            <mainClass>Main</mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
 
 
     <dependencies>
