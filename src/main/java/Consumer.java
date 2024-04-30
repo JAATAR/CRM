@@ -57,36 +57,36 @@ public class Consumer {
         channel.basicConsume(queueName, true, consumer);
         System.out.println("ready to consumer");
     }
-    public void saveToSalesforce(){
-        String SALESFORCE_USERNAME = "soufianehamoumi@resilient-koala-mrp9k1.com";
+    public void saveToSalesforce() {
+        String SALESFORCE_USERNAME = "ehbevent@student.ehb.be";
         String SALESFORCE_PASSWORD = "5431Event";
         String SALESFORCE_SECURITY_TOKEN = "NZTge2bWfzzVvxf8rZkPKOhA";
-        String loginPassword = SALESFORCE_PASSWORD + SALESFORCE_SECURITY_TOKEN;
+        String LOGIN_URL = "https://erasmushogeschool7-dev-ed.develop.my.salesforce.com";
         String CONSUMER_KEY = "3MVG9PwZx9R6_UrfopP9UuSYm9.9btZdAiMG6rKyTdaV8nUXzfEiZJ9oT9XyY4lKvsxSv0W9L28QibW7MWtmD";
         String CONSUMER_SECRET = "8F01848AA8E6016D0D1EEA3DC0BA2C0B270C0EF3106DFFAEE09CC384F058B10C";
-        String LOGIN_URL = "https://erasmushogeschool7-dev-ed.develop.my.salesforce.com"; // Change to the appropriate login URL for your Salesforce instance
 
+        // Combineer wachtwoord en beveiligingstoken
+        String loginPassword = SALESFORCE_PASSWORD + SALESFORCE_SECURITY_TOKEN;
 
+        // Configureer de API-configuratie
         ApiConfig config = new ApiConfig()
                 .setClientId(CONSUMER_KEY)
                 .setClientSecret(CONSUMER_SECRET)
                 .setUsername(SALESFORCE_USERNAME)
-                .setPassword(SALESFORCE_PASSWORD + SALESFORCE_SECURITY_TOKEN)
-                .setLoginEndpoint(LOGIN_URL)
                 .setPassword(loginPassword)
-                ;
+                .setLoginEndpoint(LOGIN_URL);
 
         ForceApi api = new ForceApi(config);
-        // Create a Java object representing your dataCustomObject
-        Customobject customObject = new Customobject("Test Object", "This is a test object created from Java.");
-        // Convert the Java object to a Map for Salesforce API
-        Map<String, Object> objectMap = new HashMap<>();
-        objectMap.put("Name__c", "Mike Tyson");
-        objectMap.put("Leeftijd__c", 25);
-        objectMap.put("Phone__c", "0485009987");
-        objectMap.put("Email__c", "miketyson@gmail.com");
-        // Save the object to Salesforce
-         api.createSObject("Deelnemer__c", objectMap);
+
+        // Maak de gegevens voor de aan te maken Deelnemer
+        Map<String, Object> deelnemerFields = new HashMap<>();
+        deelnemerFields.put("Name", "Mike Tyson");
+        deelnemerFields.put("Leeftijd__c", 25);
+        deelnemerFields.put("Nummertelefoon__c", "0485009987");
+        deelnemerFields.put("Email__c", "miketyson@gmail.com");
+
+        // Maak de Deelnemer aan in Salesforce
+        api.createSObject("Deelnemer__c", deelnemerFields);
     }
 
 }

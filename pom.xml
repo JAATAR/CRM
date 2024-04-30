@@ -74,6 +74,17 @@
             <version>60.0.0</version> <!-- De versie kan variëren afhankelijk van de Salesforce API-versie -->
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.32</version> <!-- versie kan verschillen -->
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.6</version> <!-- versie kan verschillen -->
+        </dependency>
+
 
 
 
