@@ -55,6 +55,7 @@ public class Consumer {
 
         // start consuming messages from the queue
         channel.basicConsume(queueName, true, consumer);
+        System.out.println("ready to consumer");
     }
     public void saveToSalesforce(){
         ApiConfig config = new ApiConfig().setClientId("3MVG9PwZx9R6_UrfopP9UuSYm9.9btZdAiMG6rKyTdaV8nUXzfEiZJ9oT9XyY4lKvsxSv0W9L28QibW7MWtmD")
@@ -63,7 +64,7 @@ public class Consumer {
                 .setPassword("Event5431");
         ForceApi api = new ForceApi(config);
         // Create a Java object representing your dataCustomObject
-        customObject = new CustomObject("Test Object", "This is a test object created from Java.");
+        Customobject customObject = new Customobject("Test Object", "This is a test object created from Java.");
         // Convert the Java object to a Map for Salesforce API
         Map<String, Object> objectMap = new HashMap<>();
          objectMap.put("Name__c", customObject.getName());
@@ -71,8 +72,12 @@ public class Consumer {
         // Save the object to Salesforce
          api.createSObject("Custom_Object__c", objectMap);
          }
+
+
     }
-}
+
+
+
 
 
 
