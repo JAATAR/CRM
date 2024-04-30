@@ -8,7 +8,7 @@ public class Main {
 
 
         // we create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
-    /*   ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1); // use of one thread to execute the scheduled heartbeats
+      ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1); // use of one thread to execute the scheduled heartbeats
 
         // we schedule the task to send heartbeats every second
         heartbeatScheduler.scheduleAtFixedRate(() -> {
@@ -20,11 +20,11 @@ public class Main {
             }
         }, 0, 5, TimeUnit.SECONDS);
 
-*/
+
         Consumer consumer = new Consumer();
         consumer.startConsuming();
 
-
+       consumer.saveToSalesforce();
 
     }
 }
