@@ -105,7 +105,7 @@ public class Heartbeat {
     }
     public void sendHeartbeat() throws Exception {
         System.out.println("calling send heartbeat");
-        String xsd = "src/main/resources/heartbeat.xsd";
+        String xsd = "src/main/resources/xmlxsd/v0.1.xsd";
 
         //create a connectionfactory and set the host on which rabbitmq runs
         ConnectionFactory factory = new ConnectionFactory();
