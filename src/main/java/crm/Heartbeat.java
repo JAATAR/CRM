@@ -1,10 +1,14 @@
+package crm;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
 import jakarta.xml.bind.annotation.*;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -18,57 +22,57 @@ import javax.xml.validation.Validator;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
 //annotation are part of jaxb
-@XmlRootElement(name = "heartbeat")
+@XmlRootElement(name = "heartbeat", namespace = "http://ehb.local")
 @XmlType(propOrder = {"service", "timestamp", "error", "status"})
 public class Heartbeat {
-
-    private String service;
-    private long timestamp;
+    private Service service;
+    private String timestamp;
     private String error;
-    private String status;
+    private int status;
 
     private String queuName = "heartbeat_queue";
     private String host = "10.2.160.9";
 
     public Heartbeat() throws Exception {
-        this.service = "crm";
-        this.timestamp = getCurrentTimestamp();
+        this.service = new Service();
+        this.service.setName("crm");
+        this.timestamp = generateTimestamp();
 
         if (isSalesforceAvailable()){
             this.error = "none";
-            this.status = "up";
+            this.status = 1;
         }else {
             this.error = "error";
-            this.status = "down";
+            this.status = 0;
         }
 
     }
 
-
-    @XmlAttribute
-    public String getService() {
+    @XmlElement(name = "service", namespace = "http://ehb.local")
+    public Service getService() {
         return service;
     }
 
-    public void setService(String service) {
+    public void setService(Service service) {
         this.service = service;
     }
 
-    @XmlElement
-    public long getTimestamp() {
+    @XmlElement(name = "timestamp", namespace = "http://ehb.local")
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    @XmlElement
+    @XmlElement(name = "error", namespace = "http://ehb.local")
     public String getError() {
         return error;
     }
@@ -76,13 +80,12 @@ public class Heartbeat {
     public void setError(String error) {
         this.error = error;
     }
-
-    @XmlElement
-    public String getStatus() {
+    @XmlElement(name = "status", namespace = "http://ehb.local")
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -93,14 +96,24 @@ public class Heartbeat {
         Marshaller marshaller = context.createMarshaller();//marshaller converts an object to xml
         System.out.println("xml is creating");
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);// format the xml for better readability
-        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new CustomNamespacePrefixMapper());
 
         //we collect the output to a stringwriter so we can turn the marshaller xml into a string
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(this, stringWriter);
 
         String xmlString = stringWriter.toString();
-        System.out.println(xmlString); // Print the XML
+        xmlString = xmlString.replaceAll("ns1:", "");
+        xmlString = xmlString.replaceAll("xmlns:ns1=\"http://ehb.local\">", "xmlns=\"http://ehb.local\">");
+
+       // System.out.println(xmlString); // Print the XML
+        String xmlTest = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<heartbeat xmlns=\"http://ehb.local\">\n" +
+                "    <service name=\"crm\"/>\n" +
+                "    <timestamp>2024-05-02T12:00:00</timestamp>\n" +
+                "    <error>none</error>\n" +
+                "    <status>1</status>\n" +
+                "</heartbeat>";
+        System.out.println(xmlString);
         return xmlString;
     }
     public void sendHeartbeat() throws Exception {
@@ -124,7 +137,7 @@ public class Heartbeat {
             //validate the xml against the xsd
             if (!validateXML(xml,xsd)){
 
-                System.out.println("XML validation failed. Heartbeat not sent");
+                System.out.println("XML validation failed. crm.Heartbeat not sent");
                 return; // if validation fails the method stops and heartbeat is not sent
             }
 
@@ -177,6 +190,20 @@ public class Heartbeat {
         return System.currentTimeMillis() / 1000; // Convert milliseconds to seconds
     }
 
+    // New method to generate timestamp
+    private String generateTimestamp() {
+        // Get current date and time
+        LocalDateTime now = LocalDateTime.now();
+
+        // Define the desired format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+        // Format the current date and time using the formatter
+        String formattedTimestamp = now.format(formatter);
+
+        return formattedTimestamp;
+    }
+
     //validate xml
 
     public static boolean validateXML(String xml, String xsdPath) {
@@ -185,7 +212,7 @@ public class Heartbeat {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); //instance of schemafactory for xml validation
             Schema schema = factory.newSchema(new File(xsdPath)); //instance of schema by parsing the xsd file
 
-            Validator validator =schema.newValidator();
+            Validator validator=schema.newValidator();
             validator.validate(new StreamSource(new StringReader(xml))); //validating the xml against the xsd using streamsource object created from stringreader containing the xml
         }catch (IOException | SAXException e){
             System.out.println("Exception" + e.getMessage());
