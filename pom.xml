@@ -15,7 +15,37 @@
     </properties>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>wsdl/**</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <!-- Plugin om stubs te genereren van WSDL -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>wsdl</wsdlFile> <!-- De naam van je WSDL-bestand -->
+                            </wsdlFiles>
+                            <packageName>com.sforce.soap.enterprise</packageName> <!-- Doel pakket voor de gegenereerde klassen -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -30,6 +60,11 @@
             </plugin>
         </plugins>
     </build>
+<!--    <build>-->
+<!--        <plugins>-->
+
+<!--        </plugins>-->
+<!--    </build>-->
 
 
     <dependencies>
@@ -71,7 +106,7 @@
         <dependency>
             <groupId>com.force.api</groupId>
             <artifactId>force-wsc</artifactId>
-            <version>60.0.0</version> <!-- De versie kan variëren afhankelijk van de Salesforce API-versie -->
+            <version>60.0.0</version> <!-- De versie kan var afhankelijk van de Salesforce API-versie -->
         </dependency>
 
         <dependency>
@@ -80,10 +115,39 @@
             <version>1.7.32</version> <!-- versie kan verschillen -->
         </dependency>
         <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <version>1.0.2</version> <!-- Versie kan verschillen, gebruik de juiste versie voor jouw behoeften -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.common</artifactId>
+            <version>1.0.2</version> <!-- Versie kan verschillen, gebruik de juiste versie voor jouw behoeften -->
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.32</version> <!-- Gebruik hier de laatste versie -->
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.6</version> <!-- versie kan verschillen -->
+            <version>1.2.6</version> <!-- Gebruik hier de laatste versie -->
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.14.1</version> <!-- Gebruik hier de laatste versie -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.14.1</version> <!-- Gebruik hier dezelfde versie als log4j-api -->
+        </dependency>
+
+
+
+
 
 
 
