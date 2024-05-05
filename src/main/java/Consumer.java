@@ -2,9 +2,17 @@ import com.rabbitmq.client.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 
 public class Consumer {
 
@@ -50,14 +58,14 @@ public class Consumer {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8"); //convert byte array in string
                 System.out.println(" [x] Received '" + message + "'");
-
+                String xsd = "src/main/resources/xmlxsd/v0.1.xsd";
+   if(!validateXML(message, xsd)){
+       System.out.println("XML is not valid. Skipping processing.");
+       return; // stop further processing
+   }
                 try {
 
-                    // Unmarshall de XML naar de  objecten
-                    Participant participant = unmarshalParticipant(message);
-                    Event event = unmarshalEvent(message);
-                    Session session = unmarshalSession(message);
-                    Business business = unmarshalBusiness(message);
+
 
                     if(unmarshalParticipant(message) instanceof Participant){
                         Participant participant1 = (Participant) unmarshalParticipant(message);
@@ -141,6 +149,24 @@ public class Consumer {
         return (Business) jaxbUnmarshaller.unmarshal(inputStream);
 
 
+    }
+
+    //validate xml
+
+    public static boolean validateXML(String xml, String xsdPath) {
+
+        try {
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); //instance of schemafactory for xml validation
+            Schema schema = factory.newSchema(new File(xsdPath)); //instance of schema by parsing the xsd file
+
+            Validator validator =schema.newValidator();
+            validator.validate(new StreamSource(new StringReader(xml))); //validating the xml against the xsd using streamsource object created from stringreader containing the xml
+        }catch (IOException | SAXException e){
+            System.out.println("Exception" + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
 }
