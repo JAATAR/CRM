@@ -10,7 +10,7 @@ COPY . .
 
 RUN mvn clean package
 
-FROM openjdk:21-jdk
+FROM openjdk:22-jdk
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/target/CRM_Groep1-1.0-SNAPSHOT.jar .
 
 # Copy the resources directory
-COPY --from=build /app/src/main/resources /app/src/main/resources
+COPY --from=build /app/src/main/validation /app/src/main/validation
 
 # Command to run your application when the container starts
 CMD ["java", "-jar", "CRM_Groep1-1.0-SNAPSHOT.jar"]
