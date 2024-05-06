@@ -1,3 +1,7 @@
+package crm;
+
+import crm.Heartbeat;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +18,6 @@ public class Main {
             try {
                 Heartbeat heartbeat = new Heartbeat();
                 heartbeat.sendHeartbeat();
-                heartbeat.createXML();
             } catch (Exception e) {
                 e.printStackTrace();
             }
