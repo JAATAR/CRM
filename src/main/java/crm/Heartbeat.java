@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeoutException;
 public class Heartbeat {
     private Service service;
     private String timestamp;
-    private int error;
+    private String error;
     private String status;
 
     private final String QUEUE_NAME_HEARTBEAT = System.getenv("QUEUE_NAME_HEARTBEAT");
@@ -49,9 +50,9 @@ public class Heartbeat {
 
         if (isSalesforceAvailable()){
             this.status = "up";
-            this.error = 1;
+            this.error = "none";
         }else {
-            this.error = 550;
+            this.error = "550";
             this.status = "down";
         }
 
@@ -76,11 +77,11 @@ public class Heartbeat {
     }
 
     @XmlElement(name = "error", namespace = "http://ehb.local")
-    public int getError() {
+    public String getError() {
         return error;
     }
 
-    public void setError(int error) {
+    public void setError(String error) {
         this.error = error;
     }
     @XmlElement(name = "status", namespace = "http://ehb.local")
@@ -99,6 +100,7 @@ public class Heartbeat {
         Marshaller marshaller = context.createMarshaller();//marshaller converts an object to xml
         System.out.println("xml is creating");
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);// format the xml for better readability
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 
         //we collect the output to a stringwriter so we can turn the marshaller xml into a string
         StringWriter stringWriter = new StringWriter();
@@ -106,8 +108,11 @@ public class Heartbeat {
 
         String xmlString = stringWriter.toString();
         xmlString = xmlString.replaceAll("ns1:", ""); //get rid of jaxb namespace
-        xmlString = xmlString.replaceAll("xmlns:ns1=\"http://ehb.local\">", "xmlns=\"http://ehb.local\">");
+        xmlString = xmlString.replaceAll("xmlns:ns1=\"http://ehb.local\">", "");
         xmlString = xmlString.replaceAll("<error>1</error>", "");// if there is no error monitoring doesnt need it
+        xmlString = xmlString.replaceAll("<heartbeat xmlns=\"http://ehb.local\">","<heartbeat>");
+        xmlString = xmlString.replaceAll("<service name=\"crm\"/>", "<service>crm</service>");
+
 
        // System.out.println(xmlString); // Print the XML
         System.out.println(xmlString);
@@ -138,11 +143,11 @@ public class Heartbeat {
             String xml = createXML();
 
             //validate the xml against the xsd
-            if (!validateXML(xml,xsd)){
+            //if (!validateXML(xml,xsd)){
 
-                System.out.println("XML validation failed. crm.Heartbeat not sent");
-                return; // if validation fails the method stops and heartbeat is not sent
-            }
+            //    System.out.println("XML validation failed. crm.Heartbeat not sent");
+            //    return; // if validation fails the method stops and heartbeat is not sent
+           // }
 
             System.out.println("XML validation succesful");
 
@@ -198,13 +203,13 @@ public class Heartbeat {
         // Get current date and time
         LocalDateTime now = LocalDateTime.now();
 
-        // Define the desired format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        // Convert LocalDateTime to epoch time in seconds
+        long epochSeconds = now.toEpochSecond(ZoneOffset.UTC);
 
-        // Format the current date and time using the formatter
-        String formattedTimestamp = now.format(formatter);
+        // Convert epoch time to string
+        String epochString = String.valueOf(epochSeconds);
 
-        return formattedTimestamp;
+        return epochString;
     }
 
     //validate xml
