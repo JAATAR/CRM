@@ -1,4 +1,4 @@
-name: test
+name: Test
 
 on: push
 
@@ -19,3 +19,23 @@ jobs:
           groups
           hostname
           pwd
+
+      -
+
+  deploy:
+    runs-on: test
+    needs: Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy .env file
+        run: cp .env.example .env
+
+      - name: Check Docker Compose Syntax
+        run: docker compose config
+
+      - name: Deploy
+        run: |
+          docker compose down --volumes
+          docker compose up -d
