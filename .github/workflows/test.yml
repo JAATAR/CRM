@@ -2,9 +2,9 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: "main"
+    branches: "Feat-CI-CD"
   pull_request:
-    branches: "main"
+    branches: "Feat-CI-CD"
 
 jobs:
   eslint:
