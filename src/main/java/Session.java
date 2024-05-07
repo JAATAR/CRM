@@ -34,14 +34,14 @@ public class Session {
         this.participants = participants;
     }
 
-    public Session printParticipantDetails() {
+    public void printParticipantDetails() {
         System.out.println("Participants:");
         for (Participant participant : participants) {
             System.out.println("Name: " + participant.getFirstname() + " " + participant.getLastname());
             System.out.println("Email: " + participant.getEmail());
 
         }
-        return printParticipantDetails();
+
     }
 
 }
