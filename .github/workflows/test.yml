@@ -1,39 +1,70 @@
-name: Test
+name: Build, Test, and Deploy
 
-on: push
+on:
+  push:
+    branches: "main"
+  pull_request:
+    branches: "main"
 
 jobs:
-  build:
+  eslint:
+    name: Check Syntax with ESLint
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
     steps:
-      - name: "Debug: Docker"
-        run: docker info
-
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: "Debug: System Info"
-        run: |
-          git status
-          whoami
-          groups
-          hostname
-          pwd
+      - name: Use Node.js ${{ matrix.node-version }} to Check Lint
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  tests:
+    name: Run Tests
+    needs: eslint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 18.x to run Test
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm run test
 
   deploy:
+    name: Re-Deploy Application
+    needs: [eslint, tests]
     runs-on: ubuntu-latest
-    needs: build
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Copy .env file
-        run: cp .env.example .env
-
-      - name: Check Docker Compose Syntax
-        run: docker compose config
-
-      - name: Deploy
+      - name: Deploy to Kinsta
         run: |
-          docker compose down --volumes
-          docker compose up -d
+          curl -X POST \
+          https://api.kinsta.com/v1/envs/YOUR_ENV_ID/deployments \
+          -H 'Authorization: Bearer YOUR_API_TOKEN' \
+          -H 'Content-Type: application/json' \
+          -d '{"commit_hash": "${GITHUB_SHA}"}'
