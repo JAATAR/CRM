@@ -16,10 +16,16 @@ import java.io.StringReader;
 
 public class Consumer {
 
-    private final String host = "10.2.160.9";
-    private final String queueName = "inschrijving_crm_queue";
-    private final String exchangeName = "inschrijving_exchange";
-    private final String routingKey = "inschrijving";
+    private final String host = "10.2.160.10";
+
+
+    private String queueUser = "frontend_queue";
+    private String exchangeUser = "AMQ.topic";
+    private String routingKeyUser = "user";
+
+    private String queueEvent = "frontend_queue";
+    private String exchangeEvent = "AMQ.topic";
+    private String routingKeyEvent = "event";
 
     private Channel channel;
 
@@ -33,10 +39,13 @@ public class Consumer {
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
 
-            channel.queueDeclare(queueName, false, false, false, null);
-            channel.queueBind(queueName, exchangeName,routingKey); //use of the routing key to bind the queue to the exchange
+//2de queue
+            channel.queueDeclare(queueUser, false, false, false, null);
+            channel.queueBind(queueUser, exchangeUser, routingKeyUser);
+ //3de queue
 
-
+            channel.queueDeclare(queueEvent, false, false, false, null);
+            channel.queueBind(queueEvent, exchangeEvent, routingKeyEvent);
 
         }catch (Exception e){
 
@@ -94,7 +103,7 @@ public class Consumer {
         };
 
         // start consuming messages from the queue
-        channel.basicConsume(queueName, true, consumer);
+        channel.basicConsume("frontend_queue", true, consumer); // Start met consumeren van berichten voor de tweede queue
     }
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {

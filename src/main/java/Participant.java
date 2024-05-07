@@ -1,4 +1,7 @@
 import jakarta.xml.bind.annotation.*;
+
+import javax.xml.bind.annotation.XmlElement;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Participant {
