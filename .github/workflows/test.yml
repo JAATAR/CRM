@@ -1,13 +1,19 @@
+name: Test
 on: push
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: test
     steps:
-      - name: Run test
+      - name: "Debug: Docker"
+        run: docker info
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Debug: System Info"
         run: |
-          if echo "Hello, world!" | grep -q "Hello"; then
-            echo "Test passed"
-          else
-            echo "Test failed"
-            exit 1
-          fi
+          git status
+          whoami
+          groups
+          hostname
+          pwd
