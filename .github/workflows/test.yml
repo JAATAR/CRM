@@ -20,10 +20,7 @@ jobs:
           hostname
           pwd
 
-      - name: Build crm image
-        run: |
-          cd crm
-          docker build -t crm-odoo-1 . --no-cache
+      
 
   deploy:
     runs-on: ubuntu-latest
