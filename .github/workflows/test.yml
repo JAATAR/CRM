@@ -3,17 +3,8 @@ name: test
 on: push
 
 jobs:
-  build:
-    runs-on: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-
-
   deploy:
     runs-on: test
-    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
