@@ -1,8 +1,10 @@
-name: Test
+name: test
+
 on: push
+
 jobs:
   build:
-    runs-on: test
+    runs-on: ubuntu-latest
     steps:
       - name: "Debug: Docker"
         run: docker info
