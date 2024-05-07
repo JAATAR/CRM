@@ -103,7 +103,7 @@ public class Heartbeat {
     }
     public void sendHeartbeat() throws Exception {
 
-        String xsd = "src/main/resources/heartbeat.xsd";
+        String xsd = "src/main/validation/main.xsd";
 
         //create a connectionfactory and set the host on which rabbitmq runs
         ConnectionFactory factory = new ConnectionFactory();
@@ -119,7 +119,7 @@ public class Heartbeat {
             String xml = createXML();
 
             //validate the xml against the xsd
-            if (!validateXML(xml,xsd)){
+            if (!validateXML(xml, xsd)){
 
                 System.out.println("XML validation failed. Heartbeat not sent");
                 return; // if validation fails the method stops and heartbeat is not sent

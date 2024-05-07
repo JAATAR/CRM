@@ -58,7 +58,8 @@ public class Consumer {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8"); //convert byte array in string
                 System.out.println(" [x] Received '" + message + "'");
-                String xsd = "src/main/resources/xmlxsd/v0.1.xsd";
+                String xsd = "src/main/validation/main.xsd";
+
    if(!validateXML(message, xsd)){
        System.out.println("XML is not valid. Skipping processing.");
        return; // stop further processing

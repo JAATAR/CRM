@@ -1,3 +1,6 @@
 [submodule "src/main/resources/xmlxsd"]
 	path = src/main/resources/xmlxsd
 	url = https://github.com/Integration-Project-Team-1/xmlxsd
+[submodule "src/main/validation"]
+	path = src/main/validation
+	url = https://github.com/Integration-Project-Team-1/xmlxsd
