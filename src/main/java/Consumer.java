@@ -64,6 +64,8 @@ public class Consumer {
        System.out.println("XML is not valid. Skipping processing.");
        return; // stop further processing
    }
+
+                System.out.println("validation succesful");
                 try {
 
 

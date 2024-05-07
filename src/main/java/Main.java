@@ -100,11 +100,15 @@ public class Main {
         Business business = (consumer.unmarshalBusiness(test3));
         System.out.println(business.getVat());
 
-        Session session = consumer.unmarshalSession(test4);
+       /*
+
+       Session session = consumer.unmarshalSession(test4);
         for (Participant participant : session.getParticipants()) {
             System.out.println(participant.getFirstname() + " " + participant.getLastname());
             session.printParticipantDetails();
         }
+
+        */
 
 
 
