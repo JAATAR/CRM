@@ -21,7 +21,7 @@ jobs:
           pwd
 
   deploy:
-    runs-on: test
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout code
