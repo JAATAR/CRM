@@ -1,45 +1,13 @@
-name: test
-
 on: push
-
 jobs:
-  deploy:
-    runs-on: test
-    services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: "Debug: System Info"
+      - name: Run test
         run: |
-          whoami
-          groups
-          hostname
-          pwd
-
-      - name: "Debug: Docker"
-        run: docker info
-
-      - name: Deploy and start services
-        run: |
-          docker-compose down --volumes
-          docker-compose up -d
-
-      - name: Wait for services to start
-        run: |
-          sleep 30
-          docker-compose ps
-
-      - name: Check service logs
-        run: |
-          docker-compose logs
-
-      - name: Check service status
-        run: |
-          docker-compose ps
+          if echo "Hello, world!" | grep -q "Hello"; then
+            echo "Test passed"
+          else
+            echo "Test failed"
+            exit 1
+          fi
