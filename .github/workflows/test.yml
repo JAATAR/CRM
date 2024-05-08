@@ -61,6 +61,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y git
+          sudo mkdir -p /app/tmp_validation
+          sudo chown -R $USER:$USER /app
           git clone git@github.com:Integration-Project-Team-1/xmlxsd.git /app/tmp_validation
           mv /app/tmp_validation/* /src/main/validation
           rm -rf /app/tmp_validation
