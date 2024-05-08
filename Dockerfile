@@ -12,7 +12,7 @@ COPY . .
 
 # Add the submodule
 RUN apt-get update && apt-get install -y git \
-    && git submodule add git@github.com:Integration-Project-Team-1/xmlxsd.git tmp_validation \
+    && git clone https://github.com/Integration-Project-Team-1/xmlxsd.git tmp_validation \
     && mv tmp_validation/* src/main/validation \
     && rm -rf tmp_validation \
     && apt-get remove -y git \
