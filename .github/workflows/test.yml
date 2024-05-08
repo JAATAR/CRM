@@ -41,8 +41,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check Docker daemon status
+        run: docker info
+
+      - name: Check Docker Compose version
+        run: docker compose --version
+
       - name: Check Docker Compose Syntax
-        run: docker compose config
+        run: docker compose config --quiet
 
       - name: Build Docker images
         run: docker compose build
