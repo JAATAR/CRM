@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on:  ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Debug: Docker"
@@ -26,18 +26,9 @@ jobs:
           hostname
           pwd
 
-  deploy:
-    name: Deploy
+  build_docker_compose:
+    name: Build Docker Compose
     runs-on: ubuntu-latest
-
-    environment: test
-    env:
-      DEV_HOST: ${{ secrets.DEV_HOST }}
-      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
-      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
-
-
 
     steps:
       - name: Checkout code
@@ -46,7 +37,21 @@ jobs:
       - name: Check Docker Compose Syntax
         run: docker compose config
 
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build_docker_compose
 
+    environment: test
+    env:
+      DEV_HOST: ${{ secrets.DEV_HOST }}
+      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Deploy
         run: |
