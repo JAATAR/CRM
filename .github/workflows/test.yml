@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: test
+    runs-on: self-hosted
     steps:
       - name: "Debug: Docker"
         run: docker info
@@ -25,7 +25,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: test
+    runs-on: self-hosted
     environment: dev
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
