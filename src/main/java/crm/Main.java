@@ -1,7 +1,5 @@
 package crm;
 
-import crm.Heartbeat;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,8 +14,8 @@ public class Main {
         // we schedule the task to send heartbeats every second
         heartbeatScheduler.scheduleAtFixedRate(() -> {
             try {
-                Heartbeat heartbeat = new Heartbeat();
-                heartbeat.sendHeartbeat();
+                Heartbeat heartbeats = new Heartbeat();
+                heartbeats.sendHeartbeat();
             } catch (Exception e) {
                 e.printStackTrace();
             }
