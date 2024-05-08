@@ -1,10 +1,13 @@
 name: Test
 
-on: push
+on:
+  push:
+    branches:
+      - dev
 
 jobs:
   build:
-    runs-on:  ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: "Debug: Docker"
         run: docker info
@@ -20,16 +23,20 @@ jobs:
           hostname
           pwd
 
-      
-
   deploy:
-    runs-on:  ubuntu-latest
-    needs: Build
+    name: Deploy to dev
+    runs-on: self-hosted
+    environment: dev
+    env:
+      DEV_HOST: ${{ DEV_HOST }}
+      RABBITMQ_USERNAME: ${{ RABBITMQ_USERNAME }}
+      RABBITMQ_PASSWORD: ${{ RABBITMQ_PASSWORD }}
+      SSH_PRIVATE_KEY: ${{  SSH_PRIVATE_KEY }}
+      RABBITMQ_PORT: ${{ RABBITMQ_PORT }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-
 
       - name: Check Docker Compose Syntax
         run: docker compose config
