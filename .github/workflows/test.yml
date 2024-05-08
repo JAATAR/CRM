@@ -45,8 +45,8 @@ jobs:
 
       - name: Install SSH client
         run: |
-          apt-get update
-          apt-get install -y openssh-client
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
 
       - name: Check Docker daemon status
         run: docker info
