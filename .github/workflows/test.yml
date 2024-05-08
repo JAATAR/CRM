@@ -44,12 +44,12 @@ jobs:
 
       - name: Print Secrets
         run: |
-          if [ -n "$DEV_HOST" ]; then echo "DEV_HOST: $DEV_HOST"; fi
-          if [ -n "$RABBITMQ_USERNAME" ]; then echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"; fi
-          if [ -n "$RABBITMQ_PASSWORD" ]; then echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"; fi
+          if [ -n "$DEV_HOST" ]; then echo "DEV_HOST: $DEV_HOST"; else echo "DEV_HOST is not set"; fi
+          if [ -n "$RABBITMQ_USERNAME" ]; then echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"; else echo "RABBITMQ_USERNAME is not set"; fi
+          if [ -n "$RABBITMQ_PASSWORD" ]; then echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"; else echo "RABBITMQ_PASSWORD is not set"; fi
           if [ -n "$SSH_PRIVATE_KEY" ]; then echo "SSH_PRIVATE_KEY is set"; else echo "SSH_PRIVATE_KEY is not set"; fi
-          if [ -n "$RABBITMQ_PORT" ]; then echo "RABBITMQ_PORT: $RABBITMQ_PORT"; fi
-          if [ -n "$SERVER_IP" ]; then echo "SERVER_IP: $SERVER_IP"; fi
+          if [ -n "$RABBITMQ_PORT" ]; then echo "RABBITMQ_PORT: $RABBITMQ_PORT"; else echo "RABBITMQ_PORT is not set"; fi
+          if [ -n "$SERVER_IP" ]; then echo "SERVER_IP: $SERVER_IP"; else echo "SERVER_IP is not set"; fi
 
       - name: Deploy
         run: |
