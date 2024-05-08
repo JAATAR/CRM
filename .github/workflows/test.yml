@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: test
     steps:
       - name: "Debug: Docker"
         run: docker info
@@ -25,15 +25,15 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: test
     environment: dev
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
       RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
       RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
-      SERVER_IP: ${{ secrets.SERVER_IP }}
+
+
 
     steps:
       - name: Checkout code
@@ -42,14 +42,7 @@ jobs:
       - name: Check Docker Compose Syntax
         run: docker compose config
 
-      - name: Print Secrets
-        run: |
-          if [ -n "$DEV_HOST" ]; then echo "DEV_HOST: $DEV_HOST"; else echo "DEV_HOST is not set"; fi
-          if [ -n "$RABBITMQ_USERNAME" ]; then echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"; else echo "RABBITMQ_USERNAME is not set"; fi
-          if [ -n "$RABBITMQ_PASSWORD" ]; then echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"; else echo "RABBITMQ_PASSWORD is not set"; fi
-          if [ -n "$SSH_PRIVATE_KEY" ]; then echo "SSH_PRIVATE_KEY is set"; else echo "SSH_PRIVATE_KEY is not set"; fi
-          if [ -n "$RABBITMQ_PORT" ]; then echo "RABBITMQ_PORT: $RABBITMQ_PORT"; else echo "RABBITMQ_PORT is not set"; fi
-          if [ -n "$SERVER_IP" ]; then echo "SERVER_IP: $SERVER_IP"; else echo "SERVER_IP is not set"; fi
+
 
       - name: Deploy
         run: |
