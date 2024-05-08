@@ -48,6 +48,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openssh-client
 
+      - name: Create SSH directory
+        run: mkdir -p ~/.ssh
+
       - name: Add SSH private key
         run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
 
