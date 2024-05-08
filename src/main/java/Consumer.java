@@ -30,7 +30,7 @@ public class Consumer {
     private Channel channel;
 
     //we create a connection within the constructor
-    public Consumer(){
+    public Consumer() throws IOException {
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(host);
@@ -53,7 +53,7 @@ public class Consumer {
             e.printStackTrace();
         }
 
-
+        startConsuming();
 
     }
 
@@ -104,6 +104,8 @@ public class Consumer {
 
         // start consuming messages from the queue
         channel.basicConsume("frontend_queue", true, consumer); // Start met consumeren van berichten voor de tweede queue
+        channel.basicConsume(queueUser, true, consumer);
+        channel.basicConsume(queueEvent, true, consumer);
     }
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {

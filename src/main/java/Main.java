@@ -94,6 +94,7 @@ public class Main {
                  "    </participants>\n" +
                  "</session>\n";
         Consumer consumer = new Consumer();
+        consumer.startConsuming();
 
 
 
