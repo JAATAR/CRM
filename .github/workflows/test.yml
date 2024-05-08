@@ -24,15 +24,16 @@ jobs:
           pwd
 
   deploy:
-    name: Deploy to dev
-    runs-on: self-hosted
+    name: Deploy
+    runs-on: ubuntu-latest
     environment: dev
     env:
-      DEV_HOST: ${{ DEV_HOST }}
-      RABBITMQ_USERNAME: ${{ RABBITMQ_USERNAME }}
-      RABBITMQ_PASSWORD: ${{ RABBITMQ_PASSWORD }}
-      SSH_PRIVATE_KEY: ${{  SSH_PRIVATE_KEY }}
-      RABBITMQ_PORT: ${{ RABBITMQ_PORT }}
+      DEV_HOST: ${{ secrets.DEV_HOST }}
+      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+      SERVER_IP: ${{ secrets.SERVER_IP }}
 
     steps:
       - name: Checkout code
@@ -40,6 +41,15 @@ jobs:
 
       - name: Check Docker Compose Syntax
         run: docker compose config
+
+      - name: Print Secrets
+        run: |
+          echo "DEV_HOST: $DEV_HOST"
+          echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"
+          echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"
+          echo "SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY"
+          echo "RABBITMQ_PORT: $RABBITMQ_PORT"
+          echo "SERVER_IP: $SERVER_IP"
 
       - name: Deploy
         run: |
