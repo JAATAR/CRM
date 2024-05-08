@@ -17,6 +17,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: "Debug: System Info"
         run: |
@@ -41,6 +43,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install SSH client
+        run: |
+          apt-get update
+          apt-get install -y openssh-client
+
       - name: Check Docker daemon status
         run: docker info
 
@@ -54,6 +61,12 @@ jobs:
         run: docker compose build
 
       - name: Deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 10.2.160.9 >> ~/.ssh/known_hosts
           docker compose down --volumes
           docker compose up -d
