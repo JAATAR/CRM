@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - Feat-CI-CD
+      - dev
+      - main
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: "Debug: Docker"
         run: docker info
@@ -25,7 +27,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: self-hosted
+    runs-on:  ubuntu-latest
     environment: dev
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
