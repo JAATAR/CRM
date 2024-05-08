@@ -9,7 +9,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:  [self-hosted, test]
+
     steps:
       - name: "Debug: Docker"
         run: docker info
@@ -27,8 +28,9 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on:  ubuntu-latest
-    environment: dev
+    runs-on: [ self-hosted, test ]
+
+    environment: test
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
       RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
