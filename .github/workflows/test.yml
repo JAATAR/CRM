@@ -44,12 +44,12 @@ jobs:
 
       - name: Print Secrets
         run: |
-          echo "DEV_HOST: $DEV_HOST"
-          echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"
-          echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"
-          echo "SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY"
-          echo "RABBITMQ_PORT: $RABBITMQ_PORT"
-          echo "SERVER_IP: $SERVER_IP"
+          if [ -n "$DEV_HOST" ]; then echo "DEV_HOST: $DEV_HOST"; fi
+          if [ -n "$RABBITMQ_USERNAME" ]; then echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"; fi
+          if [ -n "$RABBITMQ_PASSWORD" ]; then echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"; fi
+          if [ -n "$SSH_PRIVATE_KEY" ]; then echo "SSH_PRIVATE_KEY is set"; else echo "SSH_PRIVATE_KEY is not set"; fi
+          if [ -n "$RABBITMQ_PORT" ]; then echo "RABBITMQ_PORT: $RABBITMQ_PORT"; fi
+          if [ -n "$SERVER_IP" ]; then echo "SERVER_IP: $SERVER_IP"; fi
 
       - name: Deploy
         run: |
