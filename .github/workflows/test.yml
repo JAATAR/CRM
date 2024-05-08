@@ -58,15 +58,17 @@ jobs:
         run: docker compose config --quiet
 
       - name: Build Docker images
-        run: docker compose build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+          git clone git@github.com:Integration-Project-Team-1/xmlxsd.git /app/tmp_validation
+          mv /app/tmp_validation/* /src/main/validation
+          rm -rf /app/tmp_validation
+          sudo apt-get remove -y git
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
 
       - name: Deploy
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 10.2.160.9 >> ~/.ssh/known_hosts
           docker compose down --volumes
           docker compose up -d
