@@ -212,6 +212,5 @@ public class Heartbeat {
 
         return true;
     }
-
 }
 
