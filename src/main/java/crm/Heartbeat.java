@@ -85,7 +85,7 @@ public class Heartbeat {
     }
 
     public String createXML() throws JAXBException{
-        String xsd = "src/main/xmlValidation/include.template.xsd";
+        String xsd = "src/main/resources/include.template.xsd";
 
         System.out.println("calling createXML");
 
