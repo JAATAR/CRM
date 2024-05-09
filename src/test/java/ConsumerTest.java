@@ -1,13 +1,15 @@
-
 import crm.Business;
 import crm.Consumer;
 import crm.Consumption;
 import crm.Participant;
 import org.junit.jupiter.api.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerTest {
 
@@ -50,7 +52,10 @@ public class ConsumerTest {
         Consumption consumption = consumer.unmarshalConsumption(xml);
 
         // Assert
-        assertEquals(new Date(2024, 5, 9, 21, 0, 0), consumption.getTimestamp());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date expectedDate = sdf.parse("2024-05-09T21:00:00");
+
+        assertEquals(expectedDate, consumption.getTimestamp());
         assertEquals("food", consumption.getProducts());
     }
 
