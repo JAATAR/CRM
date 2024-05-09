@@ -1,11 +1,10 @@
-name: Test
+name:  Development
 
 on:
   push:
     branches:
-      - Feat-CI-CD
+
       - dev
-      - main
 
 jobs:
   build:
@@ -72,7 +71,7 @@ jobs:
       #      - name: Check Docker Compose Syntax
       #        run: docker compose config --quiet
 
-     #      - name: Build Docker images
+      #      - name: Build Docker images
       #        run: |
       #          sudo apt-get update
       #          sudo apt-get install -y git
