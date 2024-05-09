@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-      - Feat-CI-CD
+      - test-Dev
       - dev
       - main
 
@@ -43,12 +43,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Print Secrets
-        run: |
-          echo "DEV_HOST: $DEV_HOST"
-          echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"
-          echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"
-          echo "RABBITMQ_PORT: $RABBITMQ_PORT"
+
 
       - name: Check Docker Compose Syntax
         run: docker compose config
