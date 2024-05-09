@@ -39,6 +39,9 @@ jobs:
       RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
 
     steps:
+      - name: Print DEV_HOST value
+        run: echo "DEV_HOST value is $DEV_HOST"
+
       - name: Checkout code
         uses: actions/checkout@v4
 
