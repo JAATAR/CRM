@@ -1,4 +1,4 @@
-name: Test
+name: Test and Deploy
 
 on:
   push:
@@ -17,8 +17,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: "Debug: System Info"
         run: |
@@ -27,6 +25,14 @@ jobs:
           groups
           hostname
           pwd
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'adopt'
+
+
 
   deploy:
     name: Deploy
@@ -42,8 +48,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-
 
       - name: Check Docker Compose Syntax
         run: docker compose config
