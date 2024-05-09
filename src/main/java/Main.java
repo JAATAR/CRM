@@ -98,9 +98,9 @@ public class Main {
 
 
 
-        Business business = (consumer.unmarshalBusiness(test3));
+      /*  Business business = (consumer.unmarshalBusiness(test3));
         System.out.println(business.getVat());
-
+*/
        /*
 
        Session session = consumer.unmarshalSession(test4);

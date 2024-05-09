@@ -19,13 +19,21 @@ public class Consumer {
     private final String host = "10.2.160.10";
 
 
-    private String queueUser = "frontend_queue";
+    private String queueUser = "crm_queue";
     private String exchangeUser = "AMQ.topic";
     private String routingKeyUser = "user";
 
-    private String queueEvent = "frontend_queue";
+ /*   private String queueEvent = "crm_queue";
     private String exchangeEvent = "AMQ.topic";
     private String routingKeyEvent = "event";
+*/
+    private String queueConsumption = "crm_queue";
+    private String exchangeConsumption = "AMQ.topic";
+    private String routingKeyConsumption = "consumption";
+
+    private String queueBusiness = "crm_queue";
+    private String exchangeBusiness = "AMQ.topic";
+    private String routingKeyBusiness = "business";
 
     private Channel channel;
 
@@ -44,8 +52,15 @@ public class Consumer {
             channel.queueBind(queueUser, exchangeUser, routingKeyUser);
  //3de queue
 
-            channel.queueDeclare(queueEvent, false, false, false, null);
-            channel.queueBind(queueEvent, exchangeEvent, routingKeyEvent);
+           // channel.queueDeclare(queueEvent, false, false, false, null);
+          //  channel.queueBind(queueEvent, exchangeEvent, routingKeyEvent);
+//4de queue
+            channel.queueDeclare(queueBusiness, false, false, false, null);
+            channel.queueBind(queueBusiness, exchangeBusiness, routingKeyBusiness);
+          //5de queue
+            channel.queueDeclare(queueConsumption, false, false, false, null);
+            channel.queueBind(queueConsumption, exchangeConsumption, routingKeyConsumption);
+
 
         }catch (Exception e){
 
@@ -93,7 +108,10 @@ public class Consumer {
                     } else if (unmarshalSession(message) instanceof Session){
 
                         Session session1 = (Session) unmarshalSession(message);
+                    }else if (unmarshalConsumption(message) instanceof Consumption){
+                        Consumption consumption1 = (Consumption) unmarshalConsumption(message);
                     }
+
 
                 } catch (JAXBException e) {
                     e.printStackTrace();
@@ -105,7 +123,9 @@ public class Consumer {
         // start consuming messages from the queue
         channel.basicConsume("frontend_queue", true, consumer); // Start met consumeren van berichten voor de tweede queue
         channel.basicConsume(queueUser, true, consumer);
-        channel.basicConsume(queueEvent, true, consumer);
+      //  channel.basicConsume(queueEvent, true, consumer);
+        channel.basicConsume(queueBusiness, true, consumer);
+        channel.basicConsume(queueConsumption, true, consumer);
     }
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {
@@ -120,6 +140,8 @@ public class Consumer {
             jaxbContext = JAXBContext.newInstance(Session.class);
         } else if (xml.contains("<business")) {
             jaxbContext = JAXBContext.newInstance(Business.class);
+        }else if(xml.contains("<consumption")) {
+            jaxbContext = JAXBContext.newInstance(Consumption.class);
         }
 
         if (jaxbContext != null) {
@@ -145,6 +167,13 @@ public class Consumer {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         return (Event) jaxbUnmarshaller.unmarshal(inputStream);
 
+    }
+    //Unmarshall Consumption-object van XML-string
+    public Consumption unmarshalConsumption(String xml) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(Consumption.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+        return (Consumption) jaxbUnmarshaller.unmarshal(inputStream);
     }
     // Unmarshall Session-object van XML-string
     public Session unmarshalSession(String xml) throws JAXBException {
