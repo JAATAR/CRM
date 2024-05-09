@@ -96,7 +96,6 @@ public class Heartbeat {
                 "<error>" + this.getError() + "</error>" +
                 "</heartbeat>";
 
-
        // if (!validateXML(realXml,xsd)){
 
         //    System.out.println("XML validation failed. crm.Heartbeat not sent");
@@ -215,5 +214,4 @@ public class Heartbeat {
     }
 
 }
-
 
