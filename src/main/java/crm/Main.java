@@ -14,8 +14,8 @@ public class Main {
         // we schedule the task to send heartbeats every second
         heartbeatScheduler.scheduleAtFixedRate(() -> {
             try {
-                Heartbeat heartbeats = new Heartbeat();
-                heartbeats.sendHeartbeat();
+                Heartbeat heartbeat = new Heartbeat();
+                heartbeat.sendHeartbeat();
             } catch (Exception e) {
                 e.printStackTrace();
             }
