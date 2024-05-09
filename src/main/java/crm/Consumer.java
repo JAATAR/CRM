@@ -18,25 +18,20 @@ import java.io.IOException;
 import java.io.StringReader;
 
 public class Consumer {
+    private final String QUEUEUSER = System.getenv("QUEUE_USER");
+    private final String EXCHANGE_USER = System.getenv("EXCHANGE_USER");
+    private final String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
+    private final String QUEUE_CONSUMPTION = System.getenv("QUEUE_CONSUMPTION");
+    private final String EXCHANGE_CONSUMPTION = System.getenv("EXCHANGE_CONSUMPTION");
+    private final String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
+    private final String QUEUE_BUSINESS = System.getenv("QUEUE_BUSINESS");
+    private final String EXCHANGE_BUSINESS = System.getenv("EXCHANGE_BUSINESS");
+    private final String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
 
-    private final  String devHost = System.getenv("DEV_HOST");
-
-
-    private String QUEUEUSER = System.getenv("QUEUE_USER");
-    private  String EXCHANGE_USER = System.getenv("EXCHANGE_USER");
-    private  String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
-
- /*   private String queueEvent = "crm_queue";
-    private String exchangeEvent = "AMQ.topic";
-    private String routingKeyEvent = "event";
-*/
-    private  String QUEUE_CONSUMPTION = System.getenv("QUEUE_CONSUMPTION");
-    private String EXCHANGE_CONSUMPTION = System.getenv("EXCHANGE_CONSUMPTION");
-    private String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
-
-    private String QUEUE_BUSINESS = System.getenv("QUEUE_BUSINESS");
-    private String EXCHANGE_BUSINESS = System.getenv("EXCHANGE_BUSINESS");
-    private String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
+    private final String HOST = System.getenv("DEV_HOST");
+    private final String RABBITMQ_USERNAME = System.getenv("RABBITMQ_USERNAME");
+    private final String RABBITMQ_PASSWORD = System.getenv("RABBITMQ_PASSWORD");
+    private final int RABBITMQ_PORT = Integer.parseInt(System.getenv("RABBITMQ_PORT"));
 
     private Channel channel;
 
@@ -44,23 +39,22 @@ public class Consumer {
     public Consumer() throws IOException {
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(devHost);
+        factory.setHost(HOST);
+        factory.setUsername(RABBITMQ_USERNAME);
+        factory.setPassword(RABBITMQ_PASSWORD);
+        factory.setPort(RABBITMQ_PORT);
 
         try{
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
 
-//2de queue
+
             channel.queueDeclare(QUEUEUSER, false, false, false, null);
             channel.queueBind(QUEUEUSER, EXCHANGE_USER, ROUTINGKEY_USER);
- //3de queue
 
-           // channel.queueDeclare(queueEvent, false, false, false, null);
-          //  channel.queueBind(queueEvent, exchangeEvent, routingKeyEvent);
-//4de queue
             channel.queueDeclare(QUEUE_BUSINESS, false, false, false, null);
             channel.queueBind(QUEUE_BUSINESS, EXCHANGE_BUSINESS, ROUTINGKEY_BUSINESS);
-          //5de queue
+
             channel.queueDeclare(QUEUE_CONSUMPTION, false, false, false, null);
             channel.queueBind(QUEUE_CONSUMPTION, EXCHANGE_CONSUMPTION, ROUTINGKEY_CONSUMPTION);
 
@@ -85,7 +79,7 @@ public class Consumer {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8"); //convert byte array in string
                 System.out.println(" [x] Received '" + message + "'");
-                String xsd = "src/main/validation/main.xsd";
+                String xsd = "src/main/resources/include.template.xsd";
 
    //if(!validateXML(message, xsd)){
      //  System.out.println("XML is not valid. Skipping processing.");
@@ -118,7 +112,6 @@ public class Consumer {
 
         // start consuming messages from the queue
         channel.basicConsume(QUEUEUSER, true, consumer);
-      //  channel.basicConsume(queueEvent, true, consumer);
         channel.basicConsume(QUEUE_BUSINESS, true, consumer);
         channel.basicConsume(QUEUE_CONSUMPTION, true, consumer);
     }
