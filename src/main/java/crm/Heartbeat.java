@@ -26,7 +26,7 @@ import java.util.concurrent.TimeoutException;
 public class Heartbeat {
     private String service;
     private String timestamp;
-    private String error;
+    private int error;
     private String status;
 
     private final String QUEUE_NAME_HEARTBEAT = System.getenv("QUEUE_NAME_HEARTBEAT");
@@ -41,9 +41,9 @@ public class Heartbeat {
 
         if (isSalesforceAvailable()){
             this.status = "up";
-            this.error = "none";
+            this.error = 1;
         }else {
-            this.error = "550";
+            this.error = 550;
             this.status = "down";
         }
 
@@ -68,11 +68,11 @@ public class Heartbeat {
     }
 
     @XmlElement(name = "error", namespace = "http://ehb.local")
-    public String getError() {
+    public int getError() {
         return error;
     }
 
-    public void setError(String error) {
+    public void setError(int error) {
         this.error = error;
     }
     @XmlElement(name = "status", namespace = "http://ehb.local")
@@ -85,7 +85,7 @@ public class Heartbeat {
     }
 
     public String createXML() throws JAXBException{
-        String xsd = "src/main/xmlValidation/tests/include.template.xsd";
+        String xsd = "src/main/xmlValidation/include.template.xsd";
 
         System.out.println("calling createXML");
 
@@ -104,6 +104,11 @@ public class Heartbeat {
         }
 
         System.out.println("validation succesful");
+
+        if (this.getError() == 1){
+
+            realXml = realXml.replace("<error>" + this.getError() + "</error>","");
+        }
 
         realXml = realXml.replace("xmlns=\"http://ehb.local\"", "");
         realXml = realXml.replaceAll("<heartbeat\\s+", "<heartbeat");
