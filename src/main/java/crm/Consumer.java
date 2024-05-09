@@ -1,3 +1,5 @@
+package crm;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -44,8 +46,6 @@ public class Consumer {
             e.printStackTrace();
         }
 
-
-
     }
 
 
@@ -88,7 +88,7 @@ public class Consumer {
                     .setLoginEndpoint(LOGIN_URL);
 
             ForceApi api = new ForceApi(config);
-            System.out.printf("ik werk ");
+            System.out.println("ik werk ");
             // Maak de gegevens voor de aan te maken Deelnemer
             Map<String, Object> deelnemerFields = new HashMap<>();
             System.out.println("test een ");

@@ -1,12 +1,19 @@
+# Stage 1: Build stage
 FROM maven:latest AS build
 
 WORKDIR /app
 
+COPY pom.xml .
+
+RUN mvn -B dependency:go-offline
+
+# Copy the entire local directory to the container
 COPY . .
 
-RUN mvn package
+RUN mvn clean package
 
-FROM openjdk:21-jdk
+# Stage 2: Runtime stage
+FROM openjdk:22-jdk
 
 WORKDIR /app
 
