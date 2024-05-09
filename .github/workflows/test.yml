@@ -1,0 +1,57 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - testDev
+      - dev
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Debug: Docker"
+        run: docker info
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: "Debug: System Info"
+        run: |
+          git status
+          whoami
+          groups
+          hostname
+          pwd
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    environment: test
+    env:
+      DEV_HOST: ${{ secrets.DEV_HOST }}
+      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+
+      - name: Check Docker Compose Syntax
+        run: docker compose config
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      - name: Deploy
+        run: |
+          docker compose down --volumes
+          docker compose up -d

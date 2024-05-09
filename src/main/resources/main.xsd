@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    version="0.3.3"
+    targetNamespace="http://ehb.local"
+    xmlns:r="http://ehb.local"
+    elementFormDefault="qualified">
+
+    <!-- ================================= -->
+    <!-- ========= SIMPLE  TYPES ========= -->
+    <!-- ================================= -->
+    <!-- NZTOKEN TYPE -->
+    <xs:simpleType name="nztoken">
+        <xs:restriction base="xs:token">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- POSITIVEDOUBLE TYPE -->
+    <xs:simpleType name="positiveDouble">
+        <xs:restriction base="xs:double">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- AGE TYPE -->
+    <xs:simpleType name="age"> 
+        <xs:restriction base="xs:positiveInteger"> 
+            <xs:minInclusive value="16"/>
+            <xs:maxInclusive value="150"/>
+        </xs:restriction> 
+    </xs:simpleType> 
+
+    <!-- EMAIL TYPE -->
+    <xs:simpleType name="email"> 
+        <xs:restriction base="xs:token"> 
+            <xs:pattern value="[^@]+@[^\.]+\..+"/> 
+        </xs:restriction> 
+    </xs:simpleType> 
+
+    <!-- VAT TYPE -->
+    <xs:simpleType name="VAT">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[0-9A-Z]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- PHONE TYPE -->
+    <xs:simpleType name="phone">
+        <xs:restriction base="xs:token">
+            <!-- Phone number in international form: https://en.wikipedia.org/wiki/E.164 -->
+            <xs:pattern value="[0-9]{1,15}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- METHOD TYPE -->
+    <xs:simpleType name="method">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="create"/>
+            <xs:enumeration value="update"/>
+            <xs:enumeration value="delete"/>
+            <xs:enumeration value="disable"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- UUID TYPE -->
+    <xs:simpleType name="uuid">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([0-9]|[a-f]|[A-F]){8}-([0-9]|[a-f]|[A-F]){4}-([0-9]|[a-f]|[A-F]){4}-([0-9]|[a-f]|[A-F]){4}-([0-9]|[a-f]|[A-F]){12}"/>
+        </xs:restriction>
+    </xs:simpleType>      
+
+    <!-- ================================= -->
+    <!-- ========= COMPLEX TYPES ========= -->
+    <!-- ================================= -->
+    <!-- BUSINESS TYPE -->
+    <xs:complexType name="business">
+        <xs:all>
+            <xs:element name="name" type="r:nztoken"/>
+            <xs:element name="VAT" type="r:VAT"/>
+            <xs:element name="email" type="r:email"/>
+            <xs:element name="access_code" type="xs:positiveInteger"/>
+            <xs:element name="address" type="r:nztoken"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!-- PARTICIPANT TYPE -->
+    <xs:complexType name="participant">
+      <xs:all>
+        <xs:element name="service" type="r:service"/>
+        <xs:element name="method" type="r:method"/>
+        <xs:element name="firstname" type="r:nztoken"/>
+        <xs:element name="lastname" type="r:nztoken"/>
+        <xs:element name="email" type="r:email"/>
+        <xs:element name="phone" type="r:phone"/>
+        <xs:element name="business" type="r:nztoken" minOccurs="0"/>
+        <xs:element name="age" type="r:age"/>
+      </xs:all>
+      <xs:attribute name="uuid" type="r:uuid" use="required"/>
+      <xs:attribute name="fromBusiness" type="xs:boolean" use="required"/>
+    </xs:complexType>
+
+    <!-- SERVICE TYPE -->
+    <xs:simpleType name="service">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="advertenties"/>
+            <xs:enumeration value="crm"/>
+            <xs:enumeration value="facturatie"/>
+            <xs:enumeration value="frontend"/>
+            <xs:enumeration value="kassa"/>
+            <xs:enumeration value="mailing"/>
+            <xs:enumeration value="monitoring"/>
+            <xs:enumeration value="planning"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- PRODUCT TYPE -->
+    <xs:complexType name="product">
+        <xs:all>
+            <xs:element name="name" type="xs:token"/>
+            <xs:element name="price" type="r:positiveDouble"/>
+            <xs:element name="priceVAT" type="r:positiveDouble"/>
+            <xs:element name="amount" type="xs:positiveInteger"/>
+        </xs:all>
+        <xs:attribute name="uuid" type="r:uuid" use="required"/>
+    </xs:complexType>
+
+    <!-- PRODUCTS TYPE -->
+    <xs:complexType name="products">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="product" type="r:product"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- CONSUMPTION TYPE -->
+    <xs:complexType name="consumption">
+        <xs:all>
+            <xs:element name="timestamp" type="xs:dateTime" />
+            <xs:element name="products" type="r:products" />
+        </xs:all>
+        <xs:attribute name="consumer" type="r:uuid" use="required"/>
+    </xs:complexType>
+
+    <!-- HEARTBEAT TYPE -->
+    <xs:complexType name="heartbeat">
+        <xs:all>
+          <xs:element name="service" type="r:service"/>
+          <xs:element name="timestamp" type="xs:positiveInteger"/>
+          <xs:element name="status" type="r:nztoken"/>
+          <xs:element name="error" type="xs:positiveInteger" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!-- SESSION TYPE -->
+    <xs:complexType name="session">
+        <xs:sequence>
+            <xs:element name="service" type="r:service"/>
+            <xs:element name="speakers">
+                <xs:complexType>
+                    <xs:sequence maxOccurs="unbounded">
+                        <xs:element name="participant" type="r:participant"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="participants">
+                <xs:complexType>
+                    <xs:sequence maxOccurs="unbounded">
+                        <xs:element name="participant" type="r:participant"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="description" type="r:nztoken"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- EVENT TYPE -->
+    <xs:complexType name="event">
+        <xs:sequence>
+            <xs:element name="service" type="r:service"/>
+            <xs:element name="name" type="r:nztoken"/>
+            <xs:element name="time" type="xs:dateTime"/>
+            <xs:element name="location" type="r:nztoken"/>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="session" type="r:session"/>
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- BILL TYPE -->
+    <xs:complexType name="bill">
+        <xs:sequence>
+            <xs:element name="service"/>
+            <xs:element name="filename" type="r:nztoken"/>
+            <xs:element name="data">
+                <xs:simpleType>
+                    <xs:restriction base="xs:base64Binary">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- BILLING TYPE -->
+    <xs:complexType name="billing">
+        <xs:sequence>
+            <xs:element name="service" type="r:nztoken"/>
+            <xs:element name="business" type="r:nztoken"/>
+            <xs:element name="bill" type="r:bill"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- INVENTORY TYPE -->
+    <xs:complexType name="inventory">
+        <xs:sequence>
+            <xs:element name="name" type="r:nztoken"/>
+            <xs:element name="quantity" type="xs:positiveInteger"/>
+            <xs:element name="imageUrl" type="xs:anyURI" minOccurs="0"/>
+            <xs:element name="description" type="r:nztoken" minOccurs="0"/>
+            <xs:element name="category" type="r:nztoken" minOccurs="0"/>
+            <xs:element name="service" type="r:service"/>
+        </xs:sequence>
+    </xs:complexType>
+   
+    <!-- STATUS TYPE -->
+    <xs:complexType name="status">
+        <xs:attribute name="name" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:token">
+                    <xs:enumeration value="ERROR"/>
+                    <xs:enumeration value="INFO"/>
+                    <xs:enumeration value="WARNING"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- LOG TYPE -->
+    <xs:complexType name="log">
+        <xs:sequence>
+              <xs:element name="timestamp" type="xs:dateTime"/>
+              <xs:element name="service" type="r:service"/>
+              <xs:element name="status" type="r:status"/>
+              <xs:element name="message" type="r:nztoken"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
