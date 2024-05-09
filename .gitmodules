@@ -1,0 +1,3 @@
+[submodule "src/main/xmlValidation"]
+	path = src/main/xmlValidation
+	url = https://github.com/Integration-Project-Team-1/xmlxsd
