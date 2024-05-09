@@ -16,24 +16,24 @@ import java.io.StringReader;
 
 public class Consumer {
 
-    private final String host = "10.2.160.10";
+    private final  String devHost = System.getenv("DEV_HOST");
 
 
-    private String queueUser = "crm_queue";
-    private String exchangeUser = "amq.topic";
-    private String routingKeyUser = "user";
+    private String QUEUEUSER = System.getenv("QUEUE_USER");
+    private  String EXCHANGE_USER = System.getenv("EXCHANGE_USER");
+    private  String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
 
  /*   private String queueEvent = "crm_queue";
     private String exchangeEvent = "AMQ.topic";
     private String routingKeyEvent = "event";
 */
-    private String queueConsumption = "crm_queue";
-    private String exchangeConsumption = "amq.topic";
-    private String routingKeyConsumption = "consumption";
+    private  String QUEUE_CONSUMPTION = System.getenv("QUEUE_CONSUMPTION");
+    private String EXCHANGE_CONSUMPTION = System.getenv("EXCHANGE_CONSUMPTION");
+    private String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
 
-    private String queueBusiness = "crm_queue";
-    private String exchangeBusiness = "amq.topic";
-    private String routingKeyBusiness = "business";
+    private String QUEUE_BUSINESS = System.getenv("QUEUE_BUSINESS");
+    private String EXCHANGE_BUSINESS = System.getenv("EXCHANGE_BUSINESS");
+    private String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
 
     private Channel channel;
 
@@ -41,25 +41,25 @@ public class Consumer {
     public Consumer() throws IOException {
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
+        factory.setHost(devHost);
 
         try{
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
 
 //2de queue
-            channel.queueDeclare(queueUser, false, false, false, null);
-            channel.queueBind(queueUser, exchangeUser, routingKeyUser);
+            channel.queueDeclare(QUEUEUSER, false, false, false, null);
+            channel.queueBind(QUEUEUSER, EXCHANGE_USER, ROUTINGKEY_USER);
  //3de queue
 
            // channel.queueDeclare(queueEvent, false, false, false, null);
           //  channel.queueBind(queueEvent, exchangeEvent, routingKeyEvent);
 //4de queue
-            channel.queueDeclare(queueBusiness, false, false, false, null);
-            channel.queueBind(queueBusiness, exchangeBusiness, routingKeyBusiness);
+            channel.queueDeclare(QUEUE_BUSINESS, false, false, false, null);
+            channel.queueBind(QUEUE_BUSINESS, EXCHANGE_BUSINESS, ROUTINGKEY_BUSINESS);
           //5de queue
-            channel.queueDeclare(queueConsumption, false, false, false, null);
-            channel.queueBind(queueConsumption, exchangeConsumption, routingKeyConsumption);
+            channel.queueDeclare(QUEUE_CONSUMPTION, false, false, false, null);
+            channel.queueBind(QUEUE_CONSUMPTION, EXCHANGE_CONSUMPTION, ROUTINGKEY_CONSUMPTION);
 
 
         }catch (Exception e){
@@ -121,10 +121,10 @@ public class Consumer {
         };
 
         // start consuming messages from the queue
-        channel.basicConsume(queueUser, true, consumer);
+        channel.basicConsume(QUEUEUSER, true, consumer);
       //  channel.basicConsume(queueEvent, true, consumer);
-        channel.basicConsume(queueBusiness, true, consumer);
-        channel.basicConsume(queueConsumption, true, consumer);
+        channel.basicConsume(QUEUE_BUSINESS, true, consumer);
+        channel.basicConsume(QUEUE_CONSUMPTION, true, consumer);
     }
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {

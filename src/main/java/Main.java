@@ -96,25 +96,9 @@ public class Main {
         Consumer consumer = new Consumer();
         consumer.startConsuming();
 
-// Omgevingsvariabelen ophalen
-        String devHost = System.getenv("DEV_HOST");
-        String prodHost = System.getenv("PROD_HOST");
-        String queueUser = System.getenv("QUEUE_USER");
-        String queueBusiness = System.getenv("QUEUE_BUSINESS");
-        String queueConsumption = System.getenv("QUEUE_CONSUMPTION");
-        String rabbitmqUsername = System.getenv("RABBITMQ_USERNAME");
-        String rabbitmqPassword = System.getenv("RABBITMQ_PASSWORD");
-        String rabbitmqPort = System.getenv("RABBITMQ_PORT");
 
-        // Omgevingsvariabelen afdrukken
-        System.out.println("DEV_HOST: " + devHost);
-        System.out.println("PROD_HOST: " + prodHost);
-        System.out.println("QUEUE_USER: " + queueUser);
-        System.out.println("QUEUE_BUSINESS: " + queueBusiness);
-        System.out.println("QUEUE_CONSUMPTION: " + queueConsumption);
-        System.out.println("RABBITMQ_USERNAME: " + rabbitmqUsername);
-        System.out.println("RABBITMQ_PASSWORD: " + rabbitmqPassword);
-        System.out.println("RABBITMQ_PORT: " + rabbitmqPort);
+
+
 
       /*  Business business = (consumer.unmarshalBusiness(test3));
         System.out.println(business.getVat());
