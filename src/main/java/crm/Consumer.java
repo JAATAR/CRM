@@ -18,16 +18,12 @@ import java.io.IOException;
 import java.io.StringReader;
 
 public class Consumer {
-    private final String QUEUEUSER = System.getenv("QUEUE_USER");
-    private final String EXCHANGE_USER = System.getenv("EXCHANGE_USER");
-    private final String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
-    private final String QUEUE_CONSUMPTION = System.getenv("QUEUE_CONSUMPTION");
-    private final String EXCHANGE_CONSUMPTION = System.getenv("EXCHANGE_CONSUMPTION");
-    private final String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
-    private final String QUEUE_BUSINESS = System.getenv("QUEUE_BUSINESS");
-    private final String EXCHANGE_BUSINESS = System.getenv("EXCHANGE_BUSINESS");
-    private final String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
+    private final String CONSUMING_QUEUE = System.getenv("CONSUMING_QUEUE");
+    private final String EXCHANGE = System.getenv("EXCHANGE");
 
+    private final String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
+    private final String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
+    private final String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
     private final String HOST = System.getenv("DEV_HOST");
     private final String RABBITMQ_USERNAME = System.getenv("RABBITMQ_USERNAME");
     private final String RABBITMQ_PASSWORD = System.getenv("RABBITMQ_PASSWORD");
@@ -48,15 +44,10 @@ public class Consumer {
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
 
-
-            channel.queueDeclare(QUEUEUSER, false, false, false, null);
-            channel.queueBind(QUEUEUSER, EXCHANGE_USER, ROUTINGKEY_USER);
-
-            channel.queueDeclare(QUEUE_BUSINESS, false, false, false, null);
-            channel.queueBind(QUEUE_BUSINESS, EXCHANGE_BUSINESS, ROUTINGKEY_BUSINESS);
-
-            channel.queueDeclare(QUEUE_CONSUMPTION, false, false, false, null);
-            channel.queueBind(QUEUE_CONSUMPTION, EXCHANGE_CONSUMPTION, ROUTINGKEY_CONSUMPTION);
+            channel.queueDeclare(CONSUMING_QUEUE, false, false, false, null);
+            channel.queueBind(CONSUMING_QUEUE, EXCHANGE, ROUTINGKEY_USER);
+            channel.queueBind(CONSUMING_QUEUE, EXCHANGE, ROUTINGKEY_BUSINESS);
+            channel.queueBind(CONSUMING_QUEUE, EXCHANGE, ROUTINGKEY_CONSUMPTION);
 
 
         }catch (Exception e){
@@ -86,20 +77,21 @@ public class Consumer {
     //   return; // stop further processing
    //}
 
-                System.out.println("validation succesful");
+                //System.out.println("validation succesful");
                 try {
 
-
-
-                    if(unmarshalParticipant(message) instanceof Participant){
+                    if(message.contains("<participant>")){
                         Participant participant1 = (Participant) unmarshalParticipant(message);
+                        System.out.println(participant1.toString());
                     }
 
-                    else if(unmarshalBusiness(message) instanceof Business){
+                    else if(message.contains("access_code")){
                         Business business1 = (Business) unmarshalBusiness(message);
+                        System.out.println(business1.toString());
 
-                    }else if (unmarshalConsumption(message) instanceof Consumption){
+                    }else if (message.contains("<consumption>")){
                         Consumption consumption1 = (Consumption) unmarshalConsumption(message);
+                        System.out.println(consumption1.toString());
                     }
 
 
@@ -111,9 +103,9 @@ public class Consumer {
         };
 
         // start consuming messages from the queue
-        channel.basicConsume(QUEUEUSER, true, consumer);
-        channel.basicConsume(QUEUE_BUSINESS, true, consumer);
-        channel.basicConsume(QUEUE_CONSUMPTION, true, consumer);
+        channel.basicConsume(CONSUMING_QUEUE, true, consumer);
+        channel.basicConsume(CONSUMING_QUEUE, true, consumer);
+        channel.basicConsume(CONSUMING_QUEUE, true, consumer);
     }
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {

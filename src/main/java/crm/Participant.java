@@ -11,7 +11,7 @@ public class Participant {
     private int id;
 
     @XmlElement
-    private Method method;
+    private String method;
 
     @XmlElement
     private String firstname;
@@ -42,11 +42,11 @@ public class Participant {
         this.id = id;
     }
 
-    public Method getMethod() {
+    public String getMethod() {
         return method;
     }
 
-    public void setMethod(Method method) {
+    public void setMethod(String method) {
         this.method = method;
     }
 
@@ -98,10 +98,4 @@ public class Participant {
         this.age = age;
     }
 
-    public enum Method {
-        CREATE,
-        UPDATE,
-        DISABLE,
-        DELETE
-    }
 }
