@@ -31,6 +31,8 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+
+
     environment: test
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
@@ -38,10 +40,9 @@ jobs:
       RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
       RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
 
-    steps:
-      - name: Print DEV_HOST value
-        run: echo "DEV_HOST value is $DEV_HOST"
 
+
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -50,6 +51,15 @@ jobs:
 
       - name: Build Docker images
         run: docker-compose build
+              - name: Print secrets
+               run: |
+                 echo "DEV_HOST: $DEV_HOST"
+                 echo "RABBITMQ_USERNAME: $RABBITMQ_USERNAME"
+                 echo "RABBITMQ_PASSWORD: $RABBITMQ_PASSWORD"
+                 echo "RABBITMQ_PORT: $RABBITMQ_PORT"
+
+
+
 
       #      - name: Install SSH client
       #        run: |
