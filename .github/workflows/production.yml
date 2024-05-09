@@ -1,0 +1,91 @@
+name:  Production
+
+on:
+  push:
+    branches:
+
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Debug: Docker"
+        run: docker info
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: "Debug: System Info"
+        run: |
+          git status
+          whoami
+          groups
+          hostname
+          pwd
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    environment: test
+    env:
+      DEV_HOST: ${{ secrets.DEV_HOST }}
+      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
+      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Docker Compose Syntax
+        run: docker compose config
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      #      - name: Install SSH client
+      #        run: |
+      #          sudo apt-get update
+      #          sudo apt-get install -y openssh-client
+      #
+      #      - name: Create SSH directory
+      #        run: mkdir -p ~/.ssh
+      #
+      #      - name: Add SSH private key
+      #        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+      #
+      #      - name: Add GitHub to known hosts
+      #        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+      #
+      #      - name: Check Docker daemon status
+      #        run: docker info
+      #
+      #      - name: Check Docker Compose version
+      #        run: docker compose --version
+      #
+      #      - name: Check Docker Compose Syntax
+      #        run: docker compose config --quiet
+
+      #      - name: Build Docker images
+      #        run: |
+      #          sudo apt-get update
+      #          sudo apt-get install -y git
+      #          sudo mkdir -p /app/tmp_validation
+      #          sudo chown -R $USER:$USER /app
+      #          cd /app/tmp_validation
+      #          ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git clone git@github.com:Integration-Project-Team-1/xmlxsd.git .'
+      #          mv /app/tmp_validation/* /src/main/validation
+      #          rm -rf /app/tmp_validation
+      #          sudo apt-get remove -y git
+      #          sudo apt-get clean
+      #          sudo rm -rf /var/lib/apt/lists/*
+
+      - name: Deploy
+        run: |
+          docker compose down --volumes
+          docker compose up -d
