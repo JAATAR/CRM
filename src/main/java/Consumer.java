@@ -20,7 +20,7 @@ public class Consumer {
 
 
     private String queueUser = "crm_queue";
-    private String exchangeUser = "AMQ.topic";
+    private String exchangeUser = "amq.topic";
     private String routingKeyUser = "user";
 
  /*   private String queueEvent = "crm_queue";
@@ -28,11 +28,11 @@ public class Consumer {
     private String routingKeyEvent = "event";
 */
     private String queueConsumption = "crm_queue";
-    private String exchangeConsumption = "AMQ.topic";
+    private String exchangeConsumption = "amq.topic";
     private String routingKeyConsumption = "consumption";
 
     private String queueBusiness = "crm_queue";
-    private String exchangeBusiness = "AMQ.topic";
+    private String exchangeBusiness = "amq.topic";
     private String routingKeyBusiness = "business";
 
     private Channel channel;
