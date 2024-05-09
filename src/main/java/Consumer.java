@@ -121,7 +121,6 @@ public class Consumer {
         };
 
         // start consuming messages from the queue
-        channel.basicConsume("frontend_queue", true, consumer); // Start met consumeren van berichten voor de tweede queue
         channel.basicConsume(queueUser, true, consumer);
       //  channel.basicConsume(queueEvent, true, consumer);
         channel.basicConsume(queueBusiness, true, consumer);
