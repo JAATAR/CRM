@@ -30,6 +30,11 @@ public class Participant {
     private String business;
     @XmlElement(name = "date_of_birth")
     private Date dateOfBirth;
+    @XmlElement( name = "uuid")
+    private String uuid;
+
+    @XmlElement(name = "fromBusiness")
+    private String fromBusiness;
 
     public Date getDateOfBirth() {
         return dateOfBirth;
@@ -47,19 +52,13 @@ public class Participant {
         this.uuid = uuid;
     }
 
-    public boolean isFromBusiness() {
+    public String getFromBusiness() {
         return fromBusiness;
     }
 
-    public void setFromBusiness(boolean fromBusiness) {
+    public void setFromBusiness(String fromBusiness) {
         this.fromBusiness = fromBusiness;
     }
-
-    @XmlElement( name = "uuid")
-    private String uuid;
-
-    @XmlElement(name = "fromBusiness")
-    private boolean fromBusiness;
 
     public Participant() {
     }

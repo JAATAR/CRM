@@ -2,6 +2,7 @@ package crm;
 
 import com.force.api.ApiConfig;
 import com.force.api.ForceApi;
+import com.force.api.QueryResult;
 import com.rabbitmq.client.*;
 import crm.Business;
 import jakarta.xml.bind.JAXBContext;
@@ -21,12 +22,13 @@ import java.io.StringReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Consumer {
     private final String CONSUMING_QUEUE = System.getenv("CONSUMING_QUEUE");
     private final String EXCHANGE = System.getenv("EXCHANGE");
 
-    private final String  ROUTINGKEY_USER= System.getenv("ROUTINGKEY_USER");
+    private final String ROUTINGKEY_USER = System.getenv("ROUTINGKEY_USER");
     private final String ROUTINGKEY_CONSUMPTION = System.getenv("ROUTINGKEY_CONSUMPTION");
     private final String ROUTINGKEY_BUSINESS = System.getenv("ROUTINGKEY_BUSINESS");
     private final String HOST = System.getenv("DEV_HOST");
@@ -45,7 +47,7 @@ public class Consumer {
         factory.setPassword(RABBITMQ_PASSWORD);
         factory.setPort(RABBITMQ_PORT);
 
-        try{
+        try {
             Connection connection = factory.newConnection();
             channel = connection.createChannel();
 
@@ -55,7 +57,7 @@ public class Consumer {
             channel.queueBind(CONSUMING_QUEUE, EXCHANGE, ROUTINGKEY_CONSUMPTION);
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
             e.getMessage();
             e.printStackTrace();
@@ -77,28 +79,37 @@ public class Consumer {
                 System.out.println(" [x] Received '" + message + "'");
                 String xsd = "src/main/resources/include.template.xsd";
 
-   //if(!validateXML(message, xsd)){
-     //  System.out.println("XML is not valid. Skipping processing.");
-    //   return; // stop further processing
-   //}
+                //if(!validateXML(message, xsd)){
+                //  System.out.println("XML is not valid. Skipping processing.");
+                //   return; // stop further processing
+                //}
 
                 //System.out.println("validation succesful");
                 try {
 
-                    if(message.contains("<participant>")){
-                        Participant participant1 = (Participant) unmarshalParticipant(message);
-                        System.out.println(participant1.toString());
-                        createDeelnemer(participant1);
-                        System.out.println("particpant created");
-                    }
+                    if (message.contains("<participant>")) {
+                        Participant participant = (Participant) unmarshalParticipant(message);
+                        System.out.println(participant.toString());
 
-                    else if(message.contains("access_code")){
+                        if (Objects.equals(participant.getMethod(), "create")) {
+                            createDeelnemer(participant);
+                            System.out.println("particpant created");
+
+                        } else if (Objects.equals(participant.getMethod(), "update")) {
+                            updateDeelnemer(participant.getUuid(),participant);
+                            System.out.println("particpant updated");
+                        }else if(Objects.equals(participant.getMethod(), "delete")){
+                            deleteDeelnemer(participant.getUuid());
+                            System.out.println("particpant deleted");
+                        }
+
+                    } else if (message.contains("access_code")) {
                         Business business1 = (Business) unmarshalBusiness(message);
                         System.out.println(business1.toString());
                         createBusiness(business1);
                         System.out.println("business created");
 
-                    }else if (message.contains("<consumption>")){
+                    } else if (message.contains("<consumption>")) {
                         Consumption consumption1 = (Consumption) unmarshalConsumption(message);
                         System.out.println(consumption1.toString());
                         createConsumption(consumption1);
@@ -118,6 +129,7 @@ public class Consumer {
         channel.basicConsume(CONSUMING_QUEUE, true, consumer);
         channel.basicConsume(CONSUMING_QUEUE, true, consumer);
     }
+
     // Unmarshal XML to corresponding objects based on its type
     public Object unmarshalBasedOnType(String xml) throws JAXBException {
         JAXBContext jaxbContext = null;
@@ -127,7 +139,7 @@ public class Consumer {
             jaxbContext = JAXBContext.newInstance(Participant.class);
         } else if (xml.contains("<business")) {
             jaxbContext = JAXBContext.newInstance(Business.class);
-        }else if(xml.contains("<consumption")) {
+        } else if (xml.contains("<consumption")) {
             jaxbContext = JAXBContext.newInstance(Consumption.class);
         }
 
@@ -139,6 +151,7 @@ public class Consumer {
 
         return null;
     }
+
     // Unmarshall crm.Participant-object van XML-string
     public Participant unmarshalParticipant(String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Participant.class);
@@ -147,6 +160,7 @@ public class Consumer {
         return (Participant) jaxbUnmarshaller.unmarshal(inputStream);
 
     }
+
     //Unmarshall crm.Consumption-object van XML-string
     public Consumption unmarshalConsumption(String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Consumption.class);
@@ -171,15 +185,16 @@ public class Consumer {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); //instance of schemafactory for xml validation
             Schema schema = factory.newSchema(new File(xsdPath)); //instance of schema by parsing the xsd file
 
-            Validator validator =schema.newValidator();
+            Validator validator = schema.newValidator();
             validator.validate(new StreamSource(new StringReader(xml))); //validating the xml against the xsd using streamsource object created from stringreader containing the xml
-        }catch (IOException | SAXException e){
+        } catch (IOException | SAXException e) {
             System.out.println("Exception" + e.getMessage());
             return false;
         }
 
         return true;
     }
+
     public static ForceApi connectToSalesforce() {
         String SALESFORCE_USERNAME = "ehberasmus@gmail.com";
         String SALESFORCE_PASSWORD = "Event5431";
@@ -212,13 +227,13 @@ public class Consumer {
 
         Map<String, Object> deelnemerFields = new HashMap<>();
         deelnemerFields.put("Name", participant.getFirstname());
-        deelnemerFields.put("familie_naam__c",participant.getLastname());
+        deelnemerFields.put("familie_naam__c", participant.getLastname());
         deelnemerFields.put("Phone__c", participant.getPhone());
         deelnemerFields.put("Email__c", participant.getEmail());
         deelnemerFields.put("Bedrijf__c", participant.getBusiness());
-        deelnemerFields.put("date_of_birth__c",participant.getDateOfBirth());
-        deelnemerFields.put("Deelnemer_uuid__c",participant.getUuid());
-
+        deelnemerFields.put("date_of_birth__c", participant.getDateOfBirth());
+        deelnemerFields.put("Deelnemer_uuid__c", participant.getUuid());
+        deelnemerFields.put("from_business__c",participant.getFromBusiness());
 
         // Maak de Deelnemer aan in Salesforce
         api.createSObject("Deelnemer__c", deelnemerFields);
@@ -250,13 +265,63 @@ public class Consumer {
         api.createSObject("Consumption__c", consumptionFields);
     }
 
-    public static void updateDeelnemer(){
+    public static void updateDeelnemer(String uuid, Participant updatedParticipant) {
+        ForceApi api = connectToSalesforce();
+
+        // Retrieve the Deelnemer__c record based on UUID
+        QueryResult<Map> queryResult = retrieveDeelnemerByUUID(api, uuid);
+
+        if (queryResult.getTotalSize() > 0) {
+            // Get the first record from the query result
+            Map<String, Object> deelnemerRecord = queryResult.getRecords().get(0);
+
+            // Prepare fields to update
+            Map<String, Object> updatedFields = new HashMap<>();
+            updatedFields.put("Name", updatedParticipant.getFirstname());
+            updatedFields.put("familie_naam__c", updatedParticipant.getLastname());
+            updatedFields.put("Phone__c", updatedParticipant.getPhone());
+            updatedFields.put("Email__c", updatedParticipant.getEmail());
+            updatedFields.put("Bedrijf__c", updatedParticipant.getBusiness());
+            updatedFields.put("date_of_birth__c", updatedParticipant.getDateOfBirth());
+
+            // Get the record ID
+            String deelnemerUuid = (String) deelnemerRecord.get("Deelnemer_uuid__c");
+
+            // Update the Deelnemer in Salesforce using the retrieved ID and updated fields
+            api.updateSObject("Deelnemer__c", deelnemerUuid, updatedFields);
+        } else {
+            System.out.println("No Deelnemer record found with UUID: " + uuid);
+        }
+    }
+
+    public static void deleteDeelnemer(String uuid) {
+        ForceApi api = connectToSalesforce();
+        // Retrieve Deelnemer by UUID
+        QueryResult<Map> queryResult = retrieveDeelnemerByUUID(api,uuid);
+        if (queryResult.getTotalSize() > 0) {
+            String deelnemerId = queryResult.getRecords().get(0).get("Id").toString();
+            // Delete the Deelnemer
+            api.deleteSObject("Deelnemer__c", deelnemerId);
+            System.out.println("Deelnemer deleted successfully.");
+        } else {
+            System.out.println("Deelnemer not found.");
+        }
+    }
+
+    public static QueryResult<Map> retrieveDeelnemerByUUID(ForceApi api, String uuid) {
+        // Query the Deelnemer__c record by UUID
+        String query = "SELECT Name, familie_naam__c, Phone__c, Email__c, Bedrijf__c, date_of_birth__c, Deelnemer_uuid__c FROM Deelnemer__c WHERE Deelnemer_uuid__c = '" + uuid + "'";
+
+        // Perform the query
+        return api.query(query);
+    }
 
 
     }
 
 
-}
+
+
 
 
 
