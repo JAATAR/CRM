@@ -18,6 +18,8 @@ public class Consumption {
 
     @XmlElement(name = "products")
     private List<String> products;
+    @XmlElement(name = "consumer_uuid")
+    private String uuid;
 
     public String getConsumer() {
         return consumer;
@@ -41,5 +43,13 @@ public class Consumption {
 
     public void setProducts(List<String> products) {
         this.products = products;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

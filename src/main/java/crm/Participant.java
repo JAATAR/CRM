@@ -3,6 +3,7 @@ package crm;
 import jakarta.xml.bind.annotation.*;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,9 +28,38 @@ public class Participant {
 
     @XmlElement
     private String business;
+    @XmlElement(name = "date_of_birth")
+    private Date dateOfBirth;
 
-    @XmlElement
-    private int age;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public boolean isFromBusiness() {
+        return fromBusiness;
+    }
+
+    public void setFromBusiness(boolean fromBusiness) {
+        this.fromBusiness = fromBusiness;
+    }
+
+    @XmlElement( name = "uuid")
+    private String uuid;
+
+    @XmlElement(name = "fromBusiness")
+    private boolean fromBusiness;
 
     public Participant() {
     }
@@ -90,12 +120,5 @@ public class Participant {
         this.business = business;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 
 }

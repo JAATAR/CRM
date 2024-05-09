@@ -88,15 +88,21 @@ public class Consumer {
                     if(message.contains("<participant>")){
                         Participant participant1 = (Participant) unmarshalParticipant(message);
                         System.out.println(participant1.toString());
+                        createDeelnemer(participant1);
+                        System.out.println("particpant created");
                     }
 
                     else if(message.contains("access_code")){
                         Business business1 = (Business) unmarshalBusiness(message);
                         System.out.println(business1.toString());
+                        createBusiness(business1);
+                        System.out.println("business created");
 
                     }else if (message.contains("<consumption>")){
                         Consumption consumption1 = (Consumption) unmarshalConsumption(message);
                         System.out.println(consumption1.toString());
+                        createConsumption(consumption1);
+                        System.out.println("consumption created");
                     }
 
 
@@ -201,43 +207,52 @@ public class Consumer {
 
     }
 
-    public static void createDeelnemer() {
+    public static void createDeelnemer(Participant participant) {
         ForceApi api = connectToSalesforce();
 
         Map<String, Object> deelnemerFields = new HashMap<>();
-        deelnemerFields.put("Name", "marcelo");
-        deelnemerFields.put("Leeftijd__c", 32);
-        deelnemerFields.put("Phone__c", "0485009999");
-        deelnemerFields.put("Email__c", "marcelo@gmail.com");
-        deelnemerFields.put("Bedrijf__c", "real madrid");
+        deelnemerFields.put("Name", participant.getFirstname());
+        deelnemerFields.put("familie_naam__c",participant.getLastname());
+        deelnemerFields.put("Phone__c", participant.getPhone());
+        deelnemerFields.put("Email__c", participant.getEmail());
+        deelnemerFields.put("Bedrijf__c", participant.getBusiness());
+        deelnemerFields.put("date_of_birth__c",participant.getDateOfBirth());
+        deelnemerFields.put("Deelnemer_uuid__c",participant.getUuid());
+
 
         // Maak de Deelnemer aan in Salesforce
         api.createSObject("Deelnemer__c", deelnemerFields);
     }
 
-    public static void createBusiness() {
+    public static void createBusiness(Business business) {
         ForceApi api = connectToSalesforce();
         Map<String, Object> businessFields = new HashMap<>();
-        businessFields.put("Name", "business soso");
-        businessFields.put("VAT__c", "123456999");
-        businessFields.put("Email__c", "soso@bedrijf.com");
-        businessFields.put("Access_Code__c", 2455);
-        businessFields.put("Address__c", "sosostraat 128");
+        businessFields.put("Name", business.getName());
+        businessFields.put("VAT__c", business.getVat());
+        businessFields.put("Email__c", business.getEmail());
+        businessFields.put("Access_Code__c", business.getAccessCode());
+        businessFields.put("Address__c", business.getAddress());
+        //businessFields.put("Bedrijf_uuid__c",business.getUuid());
 
         // Maak het Business object aan in Salesforce
         api.createSObject("Business__c", businessFields);
     }
 
-    public static void createConsumption() {
+    public static void createConsumption(Consumption consumption) {
         ForceApi api = connectToSalesforce();
         Map<String, Object> consumptionFields = new HashMap<>();
         consumptionFields.put("Timestamp__c", new Date());
         consumptionFields.put("Name", "food");
-        consumptionFields.put("Products__c", "hotdog");
-        consumptionFields.put("Consumer__c", "het is lekker "); // Voorbeeld UUID
+        consumptionFields.put("Products__c", consumption.getProducts());
+        consumptionFields.put("Consumer_uuid__c", consumption.getUuid());
 
         // Maak het Consumption object aan in Salesforce
         api.createSObject("Consumption__c", consumptionFields);
+    }
+
+    public static void updateDeelnemer(){
+
+
     }
 
 

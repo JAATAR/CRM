@@ -113,7 +113,7 @@ public class Heartbeat {
         realXml = realXml.replaceAll("<heartbeat\\s+", "<heartbeat");
 
         // Print the XML
-        System.out.println(realXml);
+        //System.out.println(realXml);
 
 
         return realXml;
