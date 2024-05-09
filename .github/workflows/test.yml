@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: test
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Debug: Docker"
@@ -30,7 +30,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: test
+    runs-on: ubuntu-latest
 
     environment: test
     env:
