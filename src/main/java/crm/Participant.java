@@ -1,3 +1,5 @@
+package crm;
+
 import jakarta.xml.bind.annotation.*;
 
 import javax.xml.bind.annotation.XmlElement;

@@ -1,4 +1,7 @@
+package crm;
+
 import com.rabbitmq.client.*;
+import crm.Business;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -84,10 +87,10 @@ public class Consumer {
                 System.out.println(" [x] Received '" + message + "'");
                 String xsd = "src/main/validation/main.xsd";
 
-   if(!validateXML(message, xsd)){
-       System.out.println("XML is not valid. Skipping processing.");
-       return; // stop further processing
-   }
+   //if(!validateXML(message, xsd)){
+     //  System.out.println("XML is not valid. Skipping processing.");
+    //   return; // stop further processing
+   //}
 
                 System.out.println("validation succesful");
                 try {
@@ -97,17 +100,10 @@ public class Consumer {
                     if(unmarshalParticipant(message) instanceof Participant){
                         Participant participant1 = (Participant) unmarshalParticipant(message);
                     }
-                    else if(unmarshalEvent(message) instanceof Event)
-                    {
-                        Event event1 = (Event) unmarshalEvent(message);
-                    }
-                    else if(unmarshalBusiness(message) instanceof Business){
 
+                    else if(unmarshalBusiness(message) instanceof Business){
                         Business business1 = (Business) unmarshalBusiness(message);
 
-                    } else if (unmarshalSession(message) instanceof Session){
-
-                        Session session1 = (Session) unmarshalSession(message);
                     }else if (unmarshalConsumption(message) instanceof Consumption){
                         Consumption consumption1 = (Consumption) unmarshalConsumption(message);
                     }
@@ -133,10 +129,6 @@ public class Consumer {
 
         if (xml.contains("<participant")) {
             jaxbContext = JAXBContext.newInstance(Participant.class);
-        } else if (xml.contains("<event")) {
-            jaxbContext = JAXBContext.newInstance(Event.class);
-        } else if (xml.contains("<session")) {
-            jaxbContext = JAXBContext.newInstance(Session.class);
         } else if (xml.contains("<business")) {
             jaxbContext = JAXBContext.newInstance(Business.class);
         }else if(xml.contains("<consumption")) {
@@ -151,7 +143,7 @@ public class Consumer {
 
         return null;
     }
-    // Unmarshall Participant-object van XML-string
+    // Unmarshall crm.Participant-object van XML-string
     public Participant unmarshalParticipant(String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Participant.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -159,38 +151,20 @@ public class Consumer {
         return (Participant) jaxbUnmarshaller.unmarshal(inputStream);
 
     }
-    // Unmarshall Event-object van XML-string
-    public Event unmarshalEvent(String xml) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Event.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-        return (Event) jaxbUnmarshaller.unmarshal(inputStream);
-
-    }
-    //Unmarshall Consumption-object van XML-string
+    //Unmarshall crm.Consumption-object van XML-string
     public Consumption unmarshalConsumption(String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Consumption.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         return (Consumption) jaxbUnmarshaller.unmarshal(inputStream);
     }
-    // Unmarshall Session-object van XML-string
-    public Session unmarshalSession(String xml) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-        return (Session) jaxbUnmarshaller.unmarshal(inputStream);
 
-    }
-
-    // Unmarshall Business-object van XML-string
+    // Unmarshall crm.Business-object van XML-string
     public Business unmarshalBusiness(String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Business.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         return (Business) jaxbUnmarshaller.unmarshal(inputStream);
-
-
     }
 
     //validate xml
