@@ -32,8 +32,6 @@ jobs:
           java-version: 11
           distribution: 'adopt'
 
-
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -53,20 +51,20 @@ jobs:
         run: docker compose config
 
       - name: Verify Docker and Docker Compose
-        run: docker --version
-             docker-compose --version
+        run: |
+          docker --version &&
+          docker-compose --version
 
       - name: Stop and Remove Existing Containers
-        run: cd crm-app
-             docker compose down
-
-
+        run: |
+          cd crm-app &&
+          docker compose down
 
       - name: Build Docker images
         run: docker-compose build
 
       - name: Deploy
         run: |
-          cd crm-app
-          docker compose down --volumes
+          cd crm-app &&
+          docker compose down --volumes &&
           docker compose up -d
