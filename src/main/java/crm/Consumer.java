@@ -4,7 +4,6 @@ import com.force.api.ApiConfig;
 import com.force.api.ForceApi;
 import com.force.api.QueryResult;
 import com.rabbitmq.client.*;
-import crm.Business;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -90,6 +89,7 @@ public class Consumer {
                     if (message.contains("<participant>")) {
                         Participant participant = (Participant) unmarshalParticipant(message);
                         System.out.println(participant.toString());
+                        System.out.println("participant unmarshalled");
 
                         if (Objects.equals(participant.getMethod(), "create")) {
                             createDeelnemer(participant);
@@ -97,9 +97,9 @@ public class Consumer {
 
                         } else if (Objects.equals(participant.getMethod(), "update")) {
                             updateDeelnemer(participant.getUuid(),participant);
-                            System.out.println("particpant updated");
+
                         }else if(Objects.equals(participant.getMethod(), "delete")){
-                            deleteDeelnemer(participant.getUuid());
+                            //deleteDeelnemer(participant.getUuid());
                             System.out.println("particpant deleted");
                         }
 
@@ -128,28 +128,6 @@ public class Consumer {
         channel.basicConsume(CONSUMING_QUEUE, true, consumer);
         channel.basicConsume(CONSUMING_QUEUE, true, consumer);
         channel.basicConsume(CONSUMING_QUEUE, true, consumer);
-    }
-
-    // Unmarshal XML to corresponding objects based on its type
-    public Object unmarshalBasedOnType(String xml) throws JAXBException {
-        JAXBContext jaxbContext = null;
-        Unmarshaller jaxbUnmarshaller = null;
-
-        if (xml.contains("<participant")) {
-            jaxbContext = JAXBContext.newInstance(Participant.class);
-        } else if (xml.contains("<business")) {
-            jaxbContext = JAXBContext.newInstance(Business.class);
-        } else if (xml.contains("<consumption")) {
-            jaxbContext = JAXBContext.newInstance(Consumption.class);
-        }
-
-        if (jaxbContext != null) {
-            jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-            return jaxbUnmarshaller.unmarshal(inputStream);
-        }
-
-        return null;
     }
 
     // Unmarshall crm.Participant-object van XML-string
@@ -195,7 +173,7 @@ public class Consumer {
         return true;
     }
 
-    public static ForceApi connectToSalesforce() {
+    public ForceApi connectToSalesforce() {
         String SALESFORCE_USERNAME = "ehberasmus@gmail.com";
         String SALESFORCE_PASSWORD = "Event5431";
         String SALESFORCE_SECURITY_TOKEN = "S4lOdXADEdHNLYorrabi2mLg";
@@ -215,14 +193,11 @@ public class Consumer {
                 .setLoginEndpoint(LOGIN_URL);
 
         ForceApi api = new ForceApi(config);
-//            createDeelnemer(api);
-//            createBusiness(api);
-//            createConsumption(api);
         return api;
 
     }
 
-    public static void createDeelnemer(Participant participant) {
+    public void createDeelnemer(Participant participant) {
         ForceApi api = connectToSalesforce();
 
         Map<String, Object> deelnemerFields = new HashMap<>();
@@ -239,7 +214,7 @@ public class Consumer {
         api.createSObject("Deelnemer__c", deelnemerFields);
     }
 
-    public static void createBusiness(Business business) {
+    public  void createBusiness(Business business) {
         ForceApi api = connectToSalesforce();
         Map<String, Object> businessFields = new HashMap<>();
         businessFields.put("Name", business.getName());
@@ -253,7 +228,7 @@ public class Consumer {
         api.createSObject("Business__c", businessFields);
     }
 
-    public static void createConsumption(Consumption consumption) {
+    public  void createConsumption(Consumption consumption) {
         ForceApi api = connectToSalesforce();
         Map<String, Object> consumptionFields = new HashMap<>();
         consumptionFields.put("Timestamp__c", new Date());
@@ -265,11 +240,11 @@ public class Consumer {
         api.createSObject("Consumption__c", consumptionFields);
     }
 
-    public static void updateDeelnemer(String uuid, Participant updatedParticipant) {
+    public void updateDeelnemer(String uuid, Participant updatedParticipant) {
         ForceApi api = connectToSalesforce();
 
         // Retrieve the Deelnemer__c record based on UUID
-        QueryResult<Map> queryResult = retrieveDeelnemerByUUID(api, uuid);
+        QueryResult<Map<String, Object>> queryResult = retrieveDeelnemerByUUID(api, uuid);
 
         if (queryResult.getTotalSize() > 0) {
             // Get the first record from the query result
@@ -289,12 +264,13 @@ public class Consumer {
 
             // Update the Deelnemer in Salesforce using the retrieved ID and updated fields
             api.updateSObject("Deelnemer__c", deelnemerUuid, updatedFields);
+            System.out.println("particpant updated");
         } else {
             System.out.println("No Deelnemer record found with UUID: " + uuid);
         }
     }
 
-    public static void deleteDeelnemer(String uuid) {
+   /* public  void deleteDeelnemer(String uuid) {
         ForceApi api = connectToSalesforce();
         // Retrieve Deelnemer by UUID
         QueryResult<Map> queryResult = retrieveDeelnemerByUUID(api,uuid);
@@ -306,15 +282,98 @@ public class Consumer {
         } else {
             System.out.println("Deelnemer not found.");
         }
-    }
+    }*/
 
-    public static QueryResult<Map> retrieveDeelnemerByUUID(ForceApi api, String uuid) {
+    public QueryResult<Map<String, Object>> retrieveDeelnemerByUUID(ForceApi api, String uuid) {
         // Query the Deelnemer__c record by UUID
         String query = "SELECT Name, familie_naam__c, Phone__c, Email__c, Bedrijf__c, date_of_birth__c, Deelnemer_uuid__c FROM Deelnemer__c WHERE Deelnemer_uuid__c = '" + uuid + "'";
 
         // Perform the query
+        QueryResult<Map> queryResult = api.query(query);
+
+        // Cast the QueryResult to the appropriate generic type
+        return (QueryResult<Map<String, Object>>) (QueryResult<?>) queryResult;
+    }
+
+    public void showDeelnemer(String givenuuid){
+        ForceApi api = connectToSalesforce(); // Assume you have a method to connect to Salesforce
+
+        String uuid = givenuuid;
+        QueryResult<Map<String, Object>> queryResult = retrieveDeelnemerByUUID(api, uuid);
+
+        // Print the retrieved records
+        System.out.println("Retrieved Deelnemer records:");
+        for (Map<String, Object> record : queryResult.getRecords()) {
+            System.out.println("Name: " + record.get("Name"));
+            System.out.println("Familie Naam: " + record.get("familie_naam__c"));
+            System.out.println("Phone: " + record.get("Phone__c"));
+            System.out.println("Email: " + record.get("Email__c"));
+            System.out.println("Bedrijf: " + record.get("Bedrijf__c"));
+            System.out.println("Date of Birth: " + record.get("date_of_birth__c"));
+            System.out.println("Deelnemer UUID: " + record.get("Deelnemer_uuid__c"));
+            System.out.println("-----------------------------");
+        }
+    }
+
+
+
+    // Method to update a Business__c object
+    public  void updateBusiness(Business business) {
+        ForceApi api = connectToSalesforce();
+
+        // Retrieve the Business__c record by UUID
+        QueryResult<Map> businessQueryResult = retrieveBusinessByUUID(api, business.getUuid());
+
+        // Check if a Business with the provided UUID exists
+        if (businessQueryResult.getTotalSize() > 0) {
+            // Get the Business__c record ID
+            String businessUUID = (String) businessQueryResult.getRecords().get(0).get("Bedrijf_uuid__c");
+
+            // Prepare fields to update
+            Map<String, Object> businessFields = new HashMap<>();
+            businessFields.put("Name", business.getName());
+            businessFields.put("VAT__c", business.getVat());
+            businessFields.put("Email__c", business.getEmail());
+            businessFields.put("Access_Code__c", business.getAccessCode());
+            businessFields.put("Address__c", business.getAddress());
+
+            // Update the Business__c object in Salesforce
+            api.updateSObject("Business__c", businessUUID, businessFields);
+            System.out.println("Business updated successfully.");
+        } else {
+            System.out.println("No Business found with UUID " + business.getUuid());
+
+        }
+    }
+
+    // Method to delete a Business__c object
+    public  void deleteBusinessByUUID(String uuid) {
+
+        ForceApi api = connectToSalesforce();
+        // Retrieve the Business__c record by UUID
+        QueryResult<Map> businessQueryResult = retrieveBusinessByUUID(api, uuid);
+
+        // Check if a Business with the provided UUID exists
+        if (businessQueryResult.getTotalSize() > 0) {
+            // Get the Business__c record ID
+            String businessUUID = (String) businessQueryResult.getRecords().get(0).get("Bedrijf_uuid__c");
+
+            // Delete the Business__c object in Salesforce
+            api.deleteSObject("Business__c", businessUUID);
+            System.out.println("Business deleted successfully.");
+        } else {
+            System.out.println("No Business found with UUID " + uuid);
+        }
+    }
+
+    public static QueryResult<Map> retrieveBusinessByUUID(ForceApi api, String uuid) {
+        // SOQL query to retrieve Business__c record by Bedrijf_uuid__c field
+        String query = "SELECT Id, Name, VAT__c, Email__c, Access_Code__c, Address__c FROM Business__c WHERE Bedrijf_uuid__c = '" + uuid + "'";
+
+        // Perform the query
         return api.query(query);
     }
+
 
 
     }

@@ -26,6 +26,17 @@ public class Business {
     @XmlElement(name = "method")
     private String method;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @XmlElement(name = "uuid")
+    private String uuid;
+
     public Business() {
         this.service = "frontend";
         this.method = "create";

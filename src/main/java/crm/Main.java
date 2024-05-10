@@ -10,40 +10,40 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         // Create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
-        ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1); // Use one thread to execute the scheduled heartbeats
+       // ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1); // Use one thread to execute the scheduled heartbeats
 
         // Schedule the task to send heartbeats every second
-        heartbeatScheduler.scheduleAtFixedRate(() -> {
-            try {
-                Heartbeat heartbeat = new Heartbeat();
-                heartbeat.sendHeartbeat();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, 0, 5, TimeUnit.SECONDS);
+      //  heartbeatScheduler.scheduleAtFixedRate(() -> {
+       //     try {
+        //        Heartbeat heartbeat = new Heartbeat();
+         //       heartbeat.sendHeartbeat();
+         //   } catch (Exception e) {
+         //       e.printStackTrace();
+          //  }
+       // }, 0, 5, TimeUnit.SECONDS);
 
-        // Create an ExecutorService to manage concurrent execution of the Consumer task
+        //Create an ExecutorService to manage concurrent execution of the Consumer task
         ExecutorService executor = Executors.newCachedThreadPool();
 
         // Start the Consumer task
-        executor.execute(new Runnable() {
+       executor.execute(new Runnable() {
             @Override
-            public void run() {
-                Consumer consumer = null;
-                try {
-                    consumer = new Consumer();
+           public void run() {
+               Consumer consumer = null;
+               try {
+                   consumer = new Consumer();
+               } catch (IOException e) {
+                   throw new RuntimeException(e);
+               }try {
+                   consumer.startConsuming();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    consumer.startConsuming();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+                   throw new RuntimeException(e);
+               }
+           }
         });
 
         // Shutdown the executor when no longer needed
         executor.shutdown();
+
     }
 }
