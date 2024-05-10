@@ -101,8 +101,12 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.6</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>
