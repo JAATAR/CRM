@@ -52,10 +52,21 @@ jobs:
       - name: Check Docker Compose Syntax
         run: docker compose config
 
+      - name: Verify Docker and Docker Compose
+        run: docker --version
+             docker-compose --version
+
+      - name: Stop and Remove Existing Containers
+        run: cd crm-app
+             docker compose down
+
+
+
       - name: Build Docker images
         run: docker-compose build
 
       - name: Deploy
         run: |
+          cd crm-app
           docker compose down --volumes
           docker compose up -d
