@@ -34,7 +34,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on:  ubuntu-latest
+    runs-on: ubuntu-latest
 
     environment: ubuntu-latest
     env:
@@ -57,14 +57,11 @@ jobs:
 
       - name: Stop and Remove Existing Containers
         run: |
-          cd crm-app &&
-          docker compose down
+          docker-compose -f crm-app/docker-compose.yaml down
 
       - name: Build Docker images
-        run: docker-compose build
+        run: docker-compose -f crm-app/docker-compose.yaml build
 
       - name: Deploy
         run: |
-          cd crm-app &&
-          docker compose down --volumes &&
-          docker compose up -d
+          docker-compose -f crm-app/docker-compose.yaml up -d
