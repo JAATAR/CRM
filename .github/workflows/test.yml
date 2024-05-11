@@ -55,13 +55,16 @@ jobs:
           docker --version &&
           docker-compose --version
 
+      - name: Navigate to crm-app directory
+        run: cd crm-app
+
       - name: Stop and Remove Existing Containers
         run: |
-          docker-compose -f crm-app/docker-compose.yaml down
+          docker-compose down
 
       - name: Build Docker images
-        run: docker-compose -f crm-app/docker-compose.yaml build
+        run: docker-compose build
 
       - name: Deploy
         run: |
-          docker-compose -f crm-app/docker-compose.yaml up -d
+          docker-compose up -d
