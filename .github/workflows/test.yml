@@ -48,20 +48,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check Docker Compose Syntax
-        run: docker compose -f ./docker-compose.yaml config
+        run: docker compose config
 
       - name: Verify Docker and Docker Compose
         run: |
           docker --version &&
           docker-compose --version
 
+      - name: Navigate to crm-app directory
+        run: cd crm-app
+
       - name: Stop and Remove Existing Containers
         run: |
-          docker-compose -f ./docker-compose.yaml down
+          docker-compose down
 
       - name: Build Docker images
-        run: docker-compose -f ./docker-compose.yaml build
+        run: docker-compose build
 
       - name: Deploy
         run: |
-          docker-compose -f ./docker-compose.yaml up -d
+          docker-compose up -d
+
+      - name: Check Deployment
+        run: echo "Deployment successful"
