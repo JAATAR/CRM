@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:  ubuntu-latest
 
     steps:
       - name: "Debug: Docker"
@@ -36,7 +36,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    environment: ubuntu-latest
+    environment: test
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
       RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
@@ -56,7 +56,9 @@ jobs:
           docker-compose --version
 
       - name: Navigate to crm-app directory
-        run: cd crm-app
+        run: |
+          ls  # Show current directory content
+          cd crm-app
 
       - name: Stop and Remove Existing Containers
         run: |
