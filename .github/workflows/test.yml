@@ -38,7 +38,7 @@ jobs:
 
     environment:
       name: test
-      url: ${{ secrets.DEV_HOST }}
+
     env:
       DEV_HOST: ${{ secrets.DEV_HOST }}
       RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
@@ -46,9 +46,7 @@ jobs:
       RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
 
     steps:
-      - name: Get Runner's IP Address
-        id: runner_ip
-        run: echo "::set-output name=runner_ip::$(hostname -I | cut -d' ' -f1)"
+
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -73,9 +71,7 @@ jobs:
       - name: Build Docker images
         run: docker-compose build
 
-      - name: Set Runner's IP Address in Docker Compose file
-        run: |
-          sed -i "s/10.2.160.9/${{ steps.runner_ip.outputs.runner_ip }}/" docker-compose.yml
+      -
 
       - name: Deploy
         run: |
