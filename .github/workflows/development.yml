@@ -1,14 +1,15 @@
-name:  Development
+name: Test and Deploy
 
 on:
   push:
     branches:
-
+      - testDev
       - dev
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: development
 
     steps:
       - name: "Debug: Docker"
@@ -16,8 +17,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: "Debug: System Info"
         run: |
@@ -27,20 +26,28 @@ jobs:
           hostname
           pwd
 
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'adopt'
+
+      - name: "Debug: Docker Build"
+        run: |
+          docker build -t crm-app .
+          docker images
+        env:
+          DEV_HOST: 10.2.160.10
+          RABBITMQ_USERNAME: guest
+          RABBITMQ_PASSWORD: guest
+          RABBITMQ_PORT: 5672
+
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on:  development
 
-
-
-    environment: test
-    env:
-      DEV_HOST: ${{ secrets.DEV_HOST }}
-      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
-      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
-
-
+    environment:
+      name: test
 
     steps:
       - name: Checkout code
@@ -49,51 +56,26 @@ jobs:
       - name: Check Docker Compose Syntax
         run: docker compose config
 
+      - name: Verify Docker and Docker Compose
+        run: |
+          docker --version &&
+          docker-compose --version
+
+      - name: Navigate to crm-app directory
+        run: |
+          ls src/main/java/crm  # Show content of crm directory
+          cd src/main/java/crm  # Navigate to crm directory
+
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker-compose -p crm-java-app down
+
       - name: Build Docker images
-        run: docker-compose build
-
-
-
-
-
-      #      - name: Install SSH client
-      #        run: |
-      #          sudo apt-get update
-      #          sudo apt-get install -y openssh-client
-      #
-      #      - name: Create SSH directory
-      #        run: mkdir -p ~/.ssh
-      #
-      #      - name: Add SSH private key
-      #        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-      #
-      #      - name: Add GitHub to known hosts
-      #        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      #
-      #      - name: Check Docker daemon status
-      #        run: docker info
-      #
-      #      - name: Check Docker Compose version
-      #        run: docker compose --version
-      #
-      #      - name: Check Docker Compose Syntax
-      #        run: docker compose config --quiet
-
-      #      - name: Build Docker images
-      #        run: |
-      #          sudo apt-get update
-      #          sudo apt-get install -y git
-      #          sudo mkdir -p /app/tmp_validation
-      #          sudo chown -R $USER:$USER /app
-      #          cd /app/tmp_validation
-      #          ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git clone git@github.com:Integration-Project-Team-1/xmlxsd.git .'
-      #          mv /app/tmp_validation/* /src/main/validation
-      #          rm -rf /app/tmp_validation
-      #          sudo apt-get remove -y git
-      #          sudo apt-get clean
-      #          sudo rm -rf /var/lib/apt/lists/*
+        run: docker-compose -p crm-java-app build
 
       - name: Deploy
         run: |
-          docker compose down --volumes
-          docker compose up -d
+          docker-compose -p crm-java-app up -d
+
+      - name: Check Deployment
+        run: echo "Deployment successful"
