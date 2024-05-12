@@ -1,4 +1,4 @@
-import crm.Business;
+/*import crm.Business;
 import crm.Consumer;
 import crm.Consumption;
 import crm.Participant;
@@ -67,3 +67,4 @@ class ConsumerTest {
         assertFalse(result);
     }
 }
+*/

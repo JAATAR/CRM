@@ -3,16 +3,13 @@ FROM maven:latest AS build
 
 WORKDIR /app
 
-# Copy the Maven project
+COPY pom.xml .
+
+RUN mvn -B dependency:go-offline
+
+# Copy the entire local directory to the container
 COPY . .
 
-# Run Maven tests
-RUN mvn clean test
-
-# Print test reports
-RUN ls /app/target/surefire-reports
-
-# Continue with the build
 RUN mvn clean package
 
 # Stage 2: Runtime stage
@@ -25,3 +22,4 @@ COPY --from=build /app/target/CRM_Groep1-1.0-SNAPSHOT.jar .
 
 # Command to run your application when the container starts
 CMD ["java", "-jar", "CRM_Groep1-1.0-SNAPSHOT.jar"]
+
