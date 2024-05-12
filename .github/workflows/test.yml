@@ -37,7 +37,7 @@ jobs:
 
       - name: "Debug: Docker Build"
         run: |
-          docker build -t your_image_name .
+          docker build -t crm-app .
           docker images
         env:
           DEV_HOST: 10.2.160.9
