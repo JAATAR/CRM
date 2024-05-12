@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: development
 
     steps:
       - name: "Debug: Docker"
@@ -39,14 +39,14 @@ jobs:
           docker build -t crm-app .
           docker images
         env:
-          DEV_HOST: 10.2.160.9
+          DEV_HOST: 10.2.160.10
           RABBITMQ_USERNAME: guest
           RABBITMQ_PASSWORD: guest
           RABBITMQ_PORT: 5672
 
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: development
 
     environment:
       name: test
@@ -81,4 +81,3 @@ jobs:
 
       - name: Check Deployment
         run: echo "Deployment successful"
-  
