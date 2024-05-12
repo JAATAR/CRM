@@ -18,9 +18,7 @@ class ConsumerTest {
         String xml = "<participant><firstname>John</firstname><lastname>Doe</lastname></participant>";
         Consumer consumer = new Consumer();
 
-
         Object result = consumer.unmarshalBasedOnType(xml);
-
 
         assertInstanceOf(Participant.class, result);
     }
@@ -31,9 +29,7 @@ class ConsumerTest {
         String xml = "<business><name>ABC Company</name><vat>123456789</vat></business>";
         Consumer consumer = new Consumer();
 
-
         Object result = consumer.unmarshalBasedOnType(xml);
-
 
         assertInstanceOf(Business.class, result);
     }
@@ -44,9 +40,7 @@ class ConsumerTest {
         String xml = "<consumption><products>Product A, Product B</products></consumption>";
         Consumer consumer = new Consumer();
 
-
         Object result = consumer.unmarshalBasedOnType(xml);
-
 
         assertInstanceOf(Consumption.class, result);
     }
@@ -57,9 +51,7 @@ class ConsumerTest {
         String xml = "<participant><firstname>John</firstname><lastname>Doe</lastname></participant>";
         String xsdPath = "src/main/resources/include.template.xsd";
 
-
         boolean result = Consumer.validateXML(xml, xsdPath);
-
 
         assertTrue(result);
     }
@@ -67,18 +59,11 @@ class ConsumerTest {
     @Test
     void validateXML_shouldReturnFalseForInvalidXML() {
 
-        String xml = "<participant><firstname>John</firstname><lastname>Doe</lastname>";
+        String xml = "<participant><firstname>John</firstname><lastname>Doe</lastname></participant>";
         String xsdPath = "src/main/resources/include.template.xsd";
-
 
         boolean result = Consumer.validateXML(xml, xsdPath);
 
-
         assertFalse(result);
     }
-
-
-
-
-
 }
