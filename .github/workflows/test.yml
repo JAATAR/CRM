@@ -40,10 +40,10 @@ jobs:
       name: test
 
     env:
-      DEV_HOST: ${{ secrets.DEV_HOST }}
-      RABBITMQ_USERNAME: ${{ secrets.RABBITMQ_USERNAME }}
-      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
-      RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
+      DEV_HOST: 10.2.160.9
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+      RABBITMQ_PORT: 5672
 
     steps:
       - name: Checkout code
