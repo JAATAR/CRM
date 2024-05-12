@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: integration-project-dev
+    runs-on: development
 
     steps:
       - name: "Debug: Docker"
@@ -44,7 +44,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on:  integration-project-dev
+    runs-on:  development
 
     environment:
       name: test
@@ -63,8 +63,8 @@ jobs:
 
       - name: Navigate to crm-app directory
         run: |
-          ls src/main/java/crm  # Show content of crm directory
-          cd src/main/java/crm  # Navigate to crm directory
+          
+          cd src/main/java/crm 
 
       - name: Stop and Remove Existing Containers
         run: |
