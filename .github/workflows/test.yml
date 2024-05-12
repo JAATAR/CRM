@@ -59,8 +59,8 @@ jobs:
 
       - name: Navigate to crm-app directory
         run: |
-          ls  # Show current directory content
-          cd crm-app
+          ls src/main/java/crm  # Show content of crm directory
+          cd src/main/java/crm  # Navigate to crm directory
 
       - name: Stop and Remove Existing Containers
         run: |
