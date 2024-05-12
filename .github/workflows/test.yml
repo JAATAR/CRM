@@ -70,14 +70,15 @@ jobs:
 
       - name: Stop and Remove Existing Containers
         run: |
-          docker-compose down
+          docker-compose -p crm-java-app down
 
       - name: Build Docker images
-        run: docker-compose build
+        run: docker-compose -p crm-java-app build
 
       - name: Deploy
         run: |
-          docker-compose up -d
+          docker-compose -p crm-java-app up -d
 
       - name: Check Deployment
         run: echo "Deployment successful"
+  
