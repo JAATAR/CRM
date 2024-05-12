@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: test
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Debug: Docker"
@@ -34,7 +34,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: test
+    runs-on: ubuntu-latest
 
     environment:
       name: test
@@ -46,8 +46,6 @@ jobs:
       RABBITMQ_PORT: ${{ secrets.RABBITMQ_PORT }}
 
     steps:
-
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -70,8 +68,6 @@ jobs:
 
       - name: Build Docker images
         run: docker-compose build
-
-      -
 
       - name: Deploy
         run: |
