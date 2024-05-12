@@ -32,18 +32,25 @@ jobs:
           java-version: 11
           distribution: 'adopt'
 
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: "Debug: Docker Build"
+        run: |
+          docker build -t your_image_name .
+          docker images
+        env:
+          DEV_HOST: 10.2.160.9
+          RABBITMQ_USERNAME: guest
+          RABBITMQ_PASSWORD: guest
+          RABBITMQ_PORT: 5672
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
 
     environment:
       name: test
-
-    env:
-      DEV_HOST: 10.2.160.9
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: guest
-      RABBITMQ_PORT: 5672
 
     steps:
       - name: Checkout code
