@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: integration-project-dev
+    runs-on: development
 
     steps:
       - name: "Debug: Docker"
@@ -44,7 +44,7 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: integration-project-dev
+    runs-on: development
 
     environment:
       name: test
