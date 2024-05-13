@@ -7,6 +7,7 @@
     <xs:include schemaLocation="main.xsd"/>
 
     <xs:element name="heartbeat" type="r:heartbeat"/>
+    <xs:element name="participant" type="r:heartbeat"/>
 
 
 </xs:schema>

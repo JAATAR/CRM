@@ -25,6 +25,8 @@ public class Business {
 
     @XmlElement(name = "method")
     private String method;
+    @XmlAttribute(name = "uuid")
+    private String uuid;
 
     public String getUuid() {
         return uuid;
@@ -34,8 +36,6 @@ public class Business {
         this.uuid = uuid;
     }
 
-    @XmlElement(name = "uuid")
-    private String uuid;
 
     public Business() {
         this.service = "frontend";

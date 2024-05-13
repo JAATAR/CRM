@@ -88,6 +88,7 @@ public class Heartbeat {
         String xsd = "src/main/resources/include.template.xsd";
 
         System.out.println("calling createXML");
+        System.out.println(generateTimestamp());
 
         String realXml = "<heartbeat xmlns=\"http://ehb.local\">" +
                 "<service>" + this.getService() + "</service>" +
@@ -106,7 +107,7 @@ public class Heartbeat {
 
         if (this.getError() == 1){
 
-            realXml = realXml.replace("<error>" + this.getError() + "</error>","");
+            realXml = realXml.replace("<error>" + this.getError() + "</error>","<error></error>");
         }
 
         realXml = realXml.replace("xmlns=\"http://ehb.local\"", "");
@@ -195,22 +196,5 @@ public class Heartbeat {
         return epochString;
     }
 
-    //validate xml
-
-    public static boolean validateXML(String xml, String xsdPath) {
-
-        try {
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); //instance of schemafactory for xml validation
-            Schema schema = factory.newSchema(new File(xsdPath)); //instance of schema by parsing the xsd file
-
-            Validator validator=schema.newValidator();
-            validator.validate(new StreamSource(new StringReader(xml))); //validating the xml against the xsd using streamsource object created from stringreader containing the xml
-        }catch (IOException | SAXException e){
-            System.out.println("Exception" + e.getMessage());
-            return false;
-        }
-
-        return true;
-    }
 }
 

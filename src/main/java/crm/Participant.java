@@ -30,10 +30,10 @@ public class Participant {
     private String business;
     @XmlElement(name = "date_of_birth")
     private Date dateOfBirth;
-    @XmlElement( name = "uuid")
+    @XmlAttribute( name = "uuid")
     private String uuid;
 
-    @XmlElement(name = "fromBusiness")
+    @XmlAttribute(name = "fromBusiness")
     private String fromBusiness;
 
     public Date getDateOfBirth() {
