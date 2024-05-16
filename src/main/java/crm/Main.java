@@ -10,9 +10,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-
-        // Create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
+    private static  boolean isRunning = false;
+    private static  Heartbeat heartbeat;
+    public static void main(String[] args) throws Exception {
+        isRunning=true;
+        heartbeat=new Heartbeat();
+      /*  // Create a ScheduledExecutorService to schedule the heartbeats to be sent within an interval
         ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1); // Use one thread to execute the scheduled heartbeats
 
         // Schedule the task to send heartbeats every second
@@ -23,10 +26,10 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.SECONDS); */
 
         //Create an ExecutorService to manage concurrent execution of the Consumer task
-       ExecutorService executor = Executors.newCachedThreadPool();
+   /*    ExecutorService executor = Executors.newCachedThreadPool();
 
         // Start the Consumer task
         executor.execute(() -> {
@@ -55,6 +58,8 @@ public class Main {
 
         // Shutdown the executor when no longer needed
         executor.shutdown();
+        */
+
     }
 
     }
